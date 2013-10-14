@@ -14,14 +14,6 @@ object Form1: TForm1
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object lst1: TListBox
-    Left = 288
-    Top = 152
-    Width = 193
-    Height = 289
-    ItemHeight = 13
-    TabOrder = 0
-  end
   object com1: TYbCommDevice
     PortNo = 2
     Baud = br115200

@@ -27,7 +27,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
       while(!qry.eof())
       {
-           lst1->AddItem(qry.fieldValue("name"));
+           //lst1->AddItem(qry.fieldValue("name"),this);
            qry.nextRow();
       }
       qry.finalize();
