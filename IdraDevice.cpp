@@ -38,7 +38,10 @@ IDRA_ERR IDraDevice::openDev(int port ,int bps)
      {
         m_port = port;
         m_bps  = bps;
-        sio_baud(m_port, bps);
+        ret = sio_baud(m_port, bps);
+        if(ret == SIO_BADPORT) return IDRA_BADPORT;
+        if(ret == IDRA_OPENFAIL) return IDRA_OPENFAIL;
+
         return IDRA_ERR_OK;
      }
 
@@ -51,24 +54,7 @@ IDRA_ERR IDraDevice::closeDev()
 
      return IDRA_ERR_OK;
 }
-IDRA_ERR IDraDevice::sendKey(int key)
-{
 
-}
-IDRA_ERR IDraDevice::downloadKey(int key, TKeyCodec codec)
-{
-
-}
-IDRA_ERR IDraDevice::downloadKey(int key, AnsiString codec)
-{
-
-
-}
-IDRA_ERR IDraDevice::learnKey(int key, AnsiString& codec,int timeoutS)
-{
-
-
-}
 
 IDRA_ERR IDraDevice::learnKey(unsigned char codec[128],int timeoutS)
 {
@@ -76,8 +62,6 @@ IDRA_ERR IDraDevice::learnKey(unsigned char codec[128],int timeoutS)
       cmd[3] = CMD_LEARN_NO_SAVE;
       cmd[4] = 0; //固定为0，因为不保存
       cmd[5] = cmd[1] + cmd[2] + cmd[3] + cmd[4];
-
-      //memcpy(cmd + 8, codec, 128);
 
       if(m_port != -1)
       {
@@ -88,7 +72,17 @@ IDRA_ERR IDraDevice::learnKey(unsigned char codec[128],int timeoutS)
 
          int size = sio_read(m_port, cmd , 136);
 
-         if(size == 136) return IDRA_ERR_OK;
+         if(size == 136) //学习到了数据
+         {
+              memcpy(codec, cmd+8, 128);
+              return IDRA_ERR_OK;
+         }
+         else if(size == 8)
+         {
+             if(cmd[3] == CMD_LEARN_NACK)
+                return IDRA_INVALID;
+              
+         }
 
          return IDRA_TIMEOUT;
          

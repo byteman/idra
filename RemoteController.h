@@ -10,7 +10,7 @@
 #include "IdraDevice.h"
 
 typedef std::map<AnsiString,AnsiString>  TDeviceKeyMap;
-
+typedef std::vector<AnsiString> TKeyNameList;
 struct RemoteControlInfo
 {
      AnsiString  m_name;
@@ -29,18 +29,24 @@ public:
      RemoteController();
     
      /*load 按键编码到红外发射器中*/
-     int load(AnsiString name,IDraDevice* pIdra);
+     bool load(AnsiString name,IDraDevice* pIdra);
      int unLoad();
-     /*添加按键和键编码*/
-     int addKey(AnsiString keyName, AnsiString keyCodec);
-     /*保存按键和键编码*/
-     int saveKey();
-     /*取消保存*/
-     int cancelKey();
-     /*修改遥控器的名称*/
-     int setDeviceName(AnsiString name);
-     int sendKey(AnsiString keyName);
 
+     /*判断键名是否存在*/
+     bool existKeyName(AnsiString keyName);
+
+     /*添加按键和键编码*/
+     bool addKey(AnsiString keyName, AnsiString keyCodec);
+
+     /*更新按键对应的键编码*/
+     bool updateKey(AnsiString keyName, AnsiString keyCodec);
+
+     /*修改遥控器的名称*/
+     int  setDeviceName(AnsiString name);
+     /*获取按键所对应的编码*/
+     bool getKeyCodec(AnsiString keyName,AnsiString &codec);
+     /*列出该遥控器所有的按键名称*/
+     bool listKey(TKeyNameList& keylist);
      AnsiString  m_name;
 
 

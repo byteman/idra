@@ -18,11 +18,14 @@ public:
       bool setCurrentCtrlDevice(AnsiString deviceName);
       RemoteController* getCurrentCtrlDevice();
       TDeviceNameList  m_device_list;
+      
+      bool learnKey(AnsiString keyName, int timeS);
+      bool sendKey(AnsiString keyName);
 private:
       CppSQLite3DB m_db;
       IDraDevice   m_idra;
       TDeviceInfo  m_device_info_list;
-      RemoteController m_curDev;
+      RemoteController *m_curDev;
       bool m_idra_ok;
 
 };

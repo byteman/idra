@@ -16,7 +16,7 @@
 #pragma link "RzStatus"
 #pragma resource "*.dfm"
 TForm1 *Form1;
-static IDraDevice idra;
+
 static bool bLearn = false;
 static RemoteController* gDev = NULL;
 
@@ -34,7 +34,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
       //db.execDML("create table tbl1 id(Text)");
 
-      if(!rcmgr.openDevice(1))
+      if(!rcmgr.openDevice(6))
       {
           ShowMessage("红外设备打开失败");
           //Application->Terminate();
@@ -75,7 +75,7 @@ void __fastcall TForm1::btn1Click(TObject *Sender)
       {
           unsigned char codec[128];
           btn1->Enabled = false;
-          if(idra.learnKey(codec, 5) == IDRA_ERR_OK)
+          if(rcmgr.learnKey("待机", 5))
           {
              ShowMessage("学习成功");
           }
@@ -84,6 +84,13 @@ void __fastcall TForm1::btn1Click(TObject *Sender)
              ShowMessage("学习失败");
           }
           btn1->Enabled = true;
+      }
+      else
+      {
+          if(!rcmgr.sendKey("待机"))
+          {
+              ShowMessage("发送失败");
+          }
       }
 }
 //---------------------------------------------------------------------------
@@ -111,7 +118,15 @@ void __fastcall TForm1::btnPlayClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::addKeyButton(AnsiString name,TObject *Sender)
+{
+      //
+      TButton* btn = new TButton(this);
+      btn->Width = 50;
+      btn->Height = 40;
 
+     // btn->Left = 
+}
 
 void __fastcall TForm1::btn23Click(TObject *Sender)
 {
@@ -121,7 +136,66 @@ void __fastcall TForm1::btn23Click(TObject *Sender)
 
          ShowMessage("切换成功");
 
+         TKeyNameList keyList;
+         rcmgr.getCurrentCtrlDevice()->listKey(keyList);
+
+         for(size_t i = 0; i < keyList.size();i++)
+         {
+             mmoInfo->Lines->Add(keyList.at(i));
+         }
      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btn2Click(TObject *Sender)
+{
+     if(bLearn)
+      {
+          unsigned char codec[128];
+          btn2->Enabled = false;
+          if(rcmgr.learnKey("静音", 5))
+          {
+             ShowMessage("学习成功");
+          }
+          else
+          {
+             ShowMessage("学习失败");
+          }
+          btn2->Enabled = true;
+      }
+      else
+      {
+          if(!rcmgr.sendKey("静音"))
+          {
+              ShowMessage("发送失败");
+          }
+      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btn6Click(TObject *Sender)
+{
+     if(bLearn)
+      {
+          unsigned char codec[128];
+          btn6->Enabled = false;
+          if(rcmgr.learnKey("向上", 5))
+          {
+             ShowMessage("学习成功");
+          }
+          else
+          {
+             ShowMessage("学习失败");
+          }
+          btn6->Enabled = true;
+      }
+      else
+      {
+          if(!rcmgr.sendKey("向上"))
+          {
+              ShowMessage("发送失败");
+          }
+      }
 }
 //---------------------------------------------------------------------------
 

@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 182
   Top = 24
   Width = 1025
-  Height = 712
+  Height = 728
   Caption = #36965#25511#22120#27169#25311#22120'V1.0'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,10 +16,10 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object grp2: TGroupBox
-    Left = 614
+    Left = 606
     Top = 0
     Width = 403
-    Height = 639
+    Height = 651
     Align = alRight
     Caption = #29992#20363#27979#35797#65306
     TabOrder = 0
@@ -86,7 +86,7 @@ object Form1: TForm1
       Left = 2
       Top = 409
       Width = 399
-      Height = 228
+      Height = 240
       Align = alClient
       Caption = #24037#20316#35760#24405#65306
       TabOrder = 2
@@ -94,7 +94,7 @@ object Form1: TForm1
         Left = 2
         Top = 15
         Width = 395
-        Height = 211
+        Height = 223
         Align = alClient
         TabOrder = 0
       end
@@ -104,7 +104,7 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 249
-    Height = 639
+    Height = 651
     Align = alLeft
     Caption = #29992#20363#21015#34920
     TabOrder = 1
@@ -112,7 +112,7 @@ object Form1: TForm1
       Left = 2
       Top = 15
       Width = 245
-      Height = 622
+      Height = 634
       Align = alClient
       ItemHeight = 13
       Items.Strings = (
@@ -127,8 +127,8 @@ object Form1: TForm1
   end
   object rzstsbr1: TRzStatusBar
     Left = 0
-    Top = 639
-    Width = 1017
+    Top = 651
+    Width = 1009
     Height = 19
     BorderInner = fsNone
     BorderOuter = fsNone
@@ -163,8 +163,8 @@ object Form1: TForm1
   object grpRemoter: TGroupBox
     Left = 249
     Top = 0
-    Width = 365
-    Height = 639
+    Width = 357
+    Height = 651
     Align = alClient
     Caption = #36965#25511#22120#21517#31216#65306
     TabOrder = 3
@@ -177,8 +177,8 @@ object Form1: TForm1
     end
     object grpStandKey: TGroupBox
       Left = 2
-      Top = 117
-      Width = 361
+      Top = 129
+      Width = 353
       Height = 336
       Align = alBottom
       Caption = #26631#20934#25353#38190#65306
@@ -199,6 +199,7 @@ object Form1: TForm1
         Height = 40
         Caption = #38745#38899
         TabOrder = 1
+        OnClick = btn2Click
       end
       object btn3: TBitBtn
         Left = 144
@@ -231,6 +232,7 @@ object Form1: TForm1
         Height = 40
         Caption = #21521#19978
         TabOrder = 5
+        OnClick = btn6Click
       end
       object btn7: TBitBtn
         Left = 80
@@ -380,8 +382,8 @@ object Form1: TForm1
     end
     object grpUserKey: TGroupBox
       Left = 2
-      Top = 453
-      Width = 361
+      Top = 465
+      Width = 353
       Height = 184
       Align = alBottom
       Caption = #33258#23450#20041#25353#38190#65306
