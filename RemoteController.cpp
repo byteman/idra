@@ -9,14 +9,15 @@
 
 #pragma package(smart_init)
 
-RemoteController::RemoteController(AnsiString name,IDraDevice* pIdra):
-    m_name(name),
-    m_idra(NULL)
+RemoteController::RemoteController()
 {
-     m_idra = pIdra;
+     m_idra = NULL;
+     m_name = "";
 }
-int RemoteController::load()
+int RemoteController::load(AnsiString name,IDraDevice* pIdra)
 {
+    m_name = name ;
+    m_idra = pIdra;
     m_db.open("idra.db3");
 
     CppSQLite3Buffer sql;

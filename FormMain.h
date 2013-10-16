@@ -87,6 +87,7 @@ __published:	// IDE-managed Components
         void __fastcall btn1Click(TObject *Sender);
         void __fastcall btn24Click(TObject *Sender);
         void __fastcall btnPlayClick(TObject *Sender);
+        void __fastcall btn23Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

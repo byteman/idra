@@ -447,6 +447,7 @@ object Form1: TForm1
       Height = 25
       Caption = #20999#25442#36965#25511#22120
       TabOrder = 3
+      OnClick = btn23Click
     end
     object btnNew: TBitBtn
       Left = 24

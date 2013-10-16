@@ -26,10 +26,10 @@ typedef std::map<AnsiString, RemoteControlInfo>  TDeviceInfo;
 //---------------------------------------------------------------------------
 class RemoteController{
 public:
-     RemoteController(AnsiString name,IDraDevice* pIdra);
+     RemoteController();
     
      /*load 按键编码到红外发射器中*/
-     int load();
+     int load(AnsiString name,IDraDevice* pIdra);
      int unLoad();
      /*添加按键和键编码*/
      int addKey(AnsiString keyName, AnsiString keyCodec);

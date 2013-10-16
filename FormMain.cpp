@@ -19,6 +19,8 @@ TForm1 *Form1;
 static IDraDevice idra;
 static bool bLearn = false;
 static RemoteController* gDev = NULL;
+
+static RemoteControllerMgr rcmgr;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
@@ -32,12 +34,19 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
       //db.execDML("create table tbl1 id(Text)");
 
-      if(idra.openDev(1,9600) != IDRA_ERR_OK)
+      if(!rcmgr.openDevice(1))
       {
           ShowMessage("红外设备打开失败");
           //Application->Terminate();
       }
+     cbbDevice->Clear();
 
+     rcmgr.load();
+
+     for(int i = 0; i < rcmgr.m_device_list.size();i++)
+     {
+        cbbDevice->AddItem(rcmgr.m_device_list.at(i), this);
+     }
 
 
 }
@@ -103,4 +112,16 @@ void __fastcall TForm1::btnPlayClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
+
+void __fastcall TForm1::btn23Click(TObject *Sender)
+{
+
+     if( rcmgr.setCurrentCtrlDevice(cbbDevice->Text))
+     {
+
+         ShowMessage("切换成功");
+
+     }
+}
+//---------------------------------------------------------------------------
 
