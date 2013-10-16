@@ -32,10 +32,10 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
       //db.execDML("create table tbl1 id(Text)");
 
-      if(idra.openDev(4,9600) != IDRA_ERR_OK)
+      if(idra.openDev(1,9600) != IDRA_ERR_OK)
       {
           ShowMessage("红外设备打开失败");
-          Application->Terminate();
+          //Application->Terminate();
       }
 
 
@@ -101,5 +101,6 @@ void __fastcall TForm1::btnPlayClick(TObject *Sender)
 
 }
 //---------------------------------------------------------------------------
+
 
 
