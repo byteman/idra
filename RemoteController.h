@@ -5,30 +5,32 @@
 #include <classes.hpp>
 
 #include <vector>
-struct DeviceKey{
-    DeviceKey()
-    {
-       num = 0;
-       label = "";
-    }
-    DeviceKey(int _num, AnsiString _label):
-    num(_num),
-    label(_label)
-    {
+#include <map>
+#include "CppSQLite3.h"
+#include "IdraDevice.h"
 
-    }
-   int          num;
-   AnsiString   label;
-   AnsiString   codec;
+typedef std::map<AnsiString,AnsiString>  TDeviceKeyMap;
+
+struct RemoteControlInfo
+{
+     AnsiString  m_name;
+     AnsiString  m_vendor;
+     AnsiString  m_softVer;
+     AnsiString  m_hardVer;
+     AnsiString  m_platform;
+     AnsiString  m_property;
+     AnsiString  m_city;
+     AnsiString  m_cpu;
 };
-
-typedef std::vector<DeviceKey>  TDeviceKey;
+typedef std::map<AnsiString, RemoteControlInfo>  TDeviceInfo;
 //---------------------------------------------------------------------------
 class RemoteController{
 public:
-     RemoteController(AnsiString name);
+     RemoteController(AnsiString name,IDraDevice* pIdra);
+    
      /*load 按键编码到红外发射器中*/
      int load();
+     int unLoad();
      /*添加按键和键编码*/
      int addKey(AnsiString keyName, AnsiString keyCodec);
      /*保存按键和键编码*/
@@ -37,8 +39,17 @@ public:
      int cancelKey();
      /*修改遥控器的名称*/
      int setDeviceName(AnsiString name);
-private:
-     TDeviceKey  keylist;
+     int sendKey(AnsiString keyName);
+
      AnsiString  m_name;
+
+
+private:
+     TDeviceKeyMap  m_keyMap;
+     IDraDevice *m_idra;
+     CppSQLite3DB m_db;
+
+
+     
 };
 #endif

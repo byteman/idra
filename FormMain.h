@@ -80,9 +80,13 @@ __published:	// IDE-managed Components
         TBitBtn *btnModify;
         TMenuItem *mmAddKey;
         TBitBtn *btnAddKey;
+        TBitBtn *btn24;
     void __fastcall FormCreate(TObject *Sender);
         void __fastcall mmIdraClick(TObject *Sender);
         void __fastcall mmAddKeyClick(TObject *Sender);
+        void __fastcall btn1Click(TObject *Sender);
+        void __fastcall btn24Click(TObject *Sender);
+        void __fastcall btnPlayClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

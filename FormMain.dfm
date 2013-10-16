@@ -37,6 +37,7 @@ object Form1: TForm1
         Height = 25
         Caption = #36816#34892#29992#20363
         TabOrder = 0
+        OnClick = btnPlayClick
       end
       object btnPause: TBitBtn
         Left = 134
@@ -189,6 +190,7 @@ object Form1: TForm1
         Height = 40
         Caption = #24453#26426
         TabOrder = 0
+        OnClick = btn1Click
       end
       object btn2: TBitBtn
         Left = 80
@@ -365,6 +367,15 @@ object Form1: TForm1
         Height = 25
         Caption = #26032#28155#25353#38190
         TabOrder = 22
+      end
+      object btn24: TBitBtn
+        Left = 184
+        Top = 288
+        Width = 75
+        Height = 25
+        Caption = #24320#22987#23398#20064
+        TabOrder = 23
+        OnClick = btn24Click
       end
     end
     object grpUserKey: TGroupBox
