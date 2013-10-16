@@ -4,11 +4,16 @@
 #pragma hdrstop
 
 #include "FormMain.h"
+#include "FormIdraSet.h"
+#include "FormKey.h"
+
 #include "CppSQLite3.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "YbCommDevice"
+#pragma link "RzPanel"
+#pragma link "RzStatus"
 #pragma resource "*.dfm"
 TForm1 *Form1;
 //---------------------------------------------------------------------------
@@ -34,6 +39,19 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
       
       db.close();
       //db.execDML("create table tbl1 id(Text)");
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::mmIdraClick(TObject *Sender)
+{
+    frmIdraSet->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::mmAddKeyClick(TObject *Sender)
+{
+      Form2->ShowModal();
 }
 //---------------------------------------------------------------------------
 

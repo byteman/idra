@@ -5,15 +5,15 @@
     <VERSION value="BCB.06.00"/>
     <PROJECT value="idra.exe"/>
     <OBJFILES value="idra.obj FormMain.obj sqlite3.obj CppSQLite3.obj RemoteController.obj 
-      IdraDevice.obj"/>
+      IdraDevice.obj FormIdraSet.obj FormKey.obj"/>
     <RESFILES value="idra.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
-    <RESDEPEN value="$(RESFILES) FormMain.dfm"/>
+    <RESDEPEN value="$(RESFILES) FormMain.dfm FormIdraSet.dfm FormKey.dfm"/>
     <LIBFILES value=""/>
-    <LIBRARIES value="yb_base_c6.lib yb_comm_c6.lib"/>
-    <SPARELIBS value="vcl.lib rtl.lib yb_comm_c6.lib yb_base_c6.lib"/>
+    <LIBRARIES value="Rz30Ctls60.lib yb_base_c6.lib yb_comm_c6.lib"/>
+    <SPARELIBS value="vcl.lib rtl.lib yb_comm_c6.lib yb_base_c6.lib Rz30Ctls60.lib vclx.lib"/>
     <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
       vcldbx.bpi ibxpress.bpi dsnap.bpi cds.bpi bdecds.bpi qrpt.bpi teeqr.bpi 
       visualclx.bpi visualdbclx.bpi dsnapcrba.bpi dsnapcon.bpi bcbsmp.bpi 
@@ -32,13 +32,14 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="idra.cpp"/>
-    <INCLUDEPATH value="&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;D:\proj\2013\idra\idra;$(BCB)\include;$(BCB)\include\vcl;E:\res\suipacktrial\Source\BCB6;$(TEEINCPATH)"/>
-    <LIBPATH value="&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib;E:\res\suipacktrial\Source\BCB6"/>
+    <INCLUDEPATH value="&quot;C:\Program Files\Raize\RC3\LibBCB6&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;D:\proj\2013\idra\idra;$(BCB)\include;$(BCB)\include\vcl;E:\res\suipacktrial\Source\BCB6;$(TEEINCPATH)"/>
+    <LIBPATH value="&quot;C:\Program Files\Raize\RC3\LibBCB6&quot;;F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib;E:\res\suipacktrial\Source\BCB6"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; -ID:\proj\2013\idra\idra 
+    <IDLCFLAGS value="-I&quot;C:\Program Files\Raize\RC3\LibBCB6&quot; 
+      -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; -ID:\proj\2013\idra\idra 
       -I$(BCB)\include -I$(BCB)\include\vcl -IE:\res\suipacktrial\Source\BCB6 
       -I$(TEEINCPATH) -src_suffix cpp -D_DEBUG -boa"/>
     <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
@@ -63,6 +64,8 @@
       <FILE FILENAME="CppSQLite3.cpp" FORMNAME="" UNITNAME="CppSQLite3" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="RemoteController.cpp" FORMNAME="" UNITNAME="RemoteController" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="IdraDevice.cpp" FORMNAME="" UNITNAME="IdraDevice" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="FormIdraSet.cpp" FORMNAME="frmIdraSet" UNITNAME="FormIdraSet" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="FormKey.cpp" FORMNAME="Form2" UNITNAME="FormKey" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

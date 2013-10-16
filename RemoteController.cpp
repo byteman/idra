@@ -16,5 +16,5 @@ RemoteController::RemoteController(AnsiString name):
 }
 int RemoteController::load()
 {
-
+    //
 }

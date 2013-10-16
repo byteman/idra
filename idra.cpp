@@ -4,6 +4,8 @@
 #pragma hdrstop
 //---------------------------------------------------------------------------
 USEFORM("FormMain.cpp", Form1);
+USEFORM("FormIdraSet.cpp", frmIdraSet);
+USEFORM("FormKey.cpp", Form2);
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -11,7 +13,9 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     {
          Application->Initialize();
          Application->CreateForm(__classid(TForm1), &Form1);
-         Application->Run();
+                 Application->CreateForm(__classid(TfrmIdraSet), &frmIdraSet);
+                 Application->CreateForm(__classid(TForm2), &Form2);
+                 Application->Run();
     }
     catch (Exception &exception)
     {
