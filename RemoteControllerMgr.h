@@ -15,8 +15,13 @@ public:
       RemoteControllerMgr();
       bool load();
       bool openDevice(int port);
+      bool existDevice( AnsiString& name);
       bool setCurrentCtrlDevice(AnsiString deviceName);
       RemoteController* getCurrentCtrlDevice();
+      RemoteController* createNewCtrlDevice(RemoteControlInfo& info);
+      RemoteController* createNewCtrlDevice(AnsiString& devName);
+      bool deleteCtrlDevice(AnsiString& devName);
+      bool existDeviceName(AnsiString deviceName);
       TDeviceNameList  m_device_list;
       
       bool learnKey(AnsiString keyName, int timeS);

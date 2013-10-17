@@ -16,10 +16,10 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object grp2: TGroupBox
-    Left = 606
+    Left = 614
     Top = 0
     Width = 403
-    Height = 651
+    Height = 655
     Align = alRight
     Caption = #29992#20363#27979#35797#65306
     TabOrder = 0
@@ -86,7 +86,7 @@ object Form1: TForm1
       Left = 2
       Top = 409
       Width = 399
-      Height = 240
+      Height = 244
       Align = alClient
       Caption = #24037#20316#35760#24405#65306
       TabOrder = 2
@@ -94,7 +94,7 @@ object Form1: TForm1
         Left = 2
         Top = 15
         Width = 395
-        Height = 223
+        Height = 227
         Align = alClient
         TabOrder = 0
       end
@@ -104,7 +104,7 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 249
-    Height = 651
+    Height = 655
     Align = alLeft
     Caption = #29992#20363#21015#34920
     TabOrder = 1
@@ -112,7 +112,7 @@ object Form1: TForm1
       Left = 2
       Top = 15
       Width = 245
-      Height = 634
+      Height = 638
       Align = alClient
       ItemHeight = 13
       Items.Strings = (
@@ -127,8 +127,8 @@ object Form1: TForm1
   end
   object rzstsbr1: TRzStatusBar
     Left = 0
-    Top = 651
-    Width = 1009
+    Top = 655
+    Width = 1017
     Height = 19
     BorderInner = fsNone
     BorderOuter = fsNone
@@ -163,8 +163,8 @@ object Form1: TForm1
   object grpRemoter: TGroupBox
     Left = 249
     Top = 0
-    Width = 357
-    Height = 651
+    Width = 365
+    Height = 655
     Align = alClient
     Caption = #36965#25511#22120#21517#31216#65306
     TabOrder = 3
@@ -177,257 +177,21 @@ object Form1: TForm1
     end
     object grpStandKey: TGroupBox
       Left = 2
-      Top = 129
-      Width = 353
+      Top = 133
+      Width = 361
       Height = 336
       Align = alBottom
       Caption = #26631#20934#25353#38190#65306
       TabOrder = 0
-      object btn1: TBitBtn
-        Left = 16
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #24453#26426
-        TabOrder = 0
-        OnClick = btn1Click
-      end
-      object btn2: TBitBtn
-        Left = 80
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #38745#38899
-        TabOrder = 1
-        OnClick = btn2Click
-      end
-      object btn3: TBitBtn
-        Left = 144
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #39318#39029
-        TabOrder = 2
-      end
-      object btn4: TBitBtn
-        Left = 208
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #33756#21333
-        TabOrder = 3
-      end
-      object btn5: TBitBtn
-        Left = 280
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #30830#23450
-        TabOrder = 4
-      end
-      object btn6: TBitBtn
-        Left = 16
-        Top = 96
-        Width = 50
-        Height = 40
-        Caption = #21521#19978
-        TabOrder = 5
-        OnClick = btn6Click
-      end
-      object btn7: TBitBtn
-        Left = 80
-        Top = 96
-        Width = 50
-        Height = 40
-        Caption = #21521#19979
-        TabOrder = 6
-      end
-      object btn8: TBitBtn
-        Left = 144
-        Top = 96
-        Width = 50
-        Height = 40
-        Caption = #21521#24038
-        TabOrder = 7
-      end
-      object btn9: TBitBtn
-        Left = 208
-        Top = 96
-        Width = 50
-        Height = 40
-        Caption = #21521#21491
-        TabOrder = 8
-      end
-      object btn10: TBitBtn
-        Left = 280
-        Top = 96
-        Width = 50
-        Height = 40
-        Caption = #36820#22238
-        TabOrder = 9
-      end
-      object btn11: TBitBtn
-        Left = 16
-        Top = 152
-        Width = 50
-        Height = 40
-        Caption = #36864#20986
-        TabOrder = 10
-      end
-      object btn12: TBitBtn
-        Left = 80
-        Top = 152
-        Width = 50
-        Height = 40
-        Caption = '1'
-        TabOrder = 11
-      end
-      object btn13: TBitBtn
-        Left = 144
-        Top = 152
-        Width = 50
-        Height = 40
-        Caption = '2'
-        TabOrder = 12
-      end
-      object btn14: TBitBtn
-        Left = 208
-        Top = 152
-        Width = 50
-        Height = 40
-        Caption = '3'
-        TabOrder = 13
-      end
-      object btn15: TBitBtn
-        Left = 280
-        Top = 152
-        Width = 50
-        Height = 40
-        Caption = '4'
-        TabOrder = 14
-      end
-      object btn16: TBitBtn
-        Left = 16
-        Top = 208
-        Width = 50
-        Height = 40
-        Caption = '5'
-        TabOrder = 15
-      end
-      object btn17: TBitBtn
-        Left = 80
-        Top = 208
-        Width = 50
-        Height = 40
-        Caption = '6'
-        TabOrder = 16
-      end
-      object btn18: TBitBtn
-        Left = 144
-        Top = 208
-        Width = 50
-        Height = 40
-        Caption = '7'
-        TabOrder = 17
-      end
-      object btn19: TBitBtn
-        Left = 208
-        Top = 208
-        Width = 50
-        Height = 40
-        Caption = '8'
-        TabOrder = 18
-      end
-      object btn20: TBitBtn
-        Left = 280
-        Top = 208
-        Width = 50
-        Height = 40
-        Caption = '9'
-        TabOrder = 19
-      end
-      object btn21: TBitBtn
-        Left = 16
-        Top = 272
-        Width = 50
-        Height = 40
-        Caption = '0'
-        TabOrder = 20
-      end
-      object btn22: TBitBtn
-        Left = 80
-        Top = 272
-        Width = 50
-        Height = 40
-        Caption = #21024#38500
-        TabOrder = 21
-      end
-      object btnAddKey: TBitBtn
-        Left = 264
-        Top = 288
-        Width = 75
-        Height = 25
-        Caption = #26032#28155#25353#38190
-        TabOrder = 22
-      end
-      object btn24: TBitBtn
-        Left = 184
-        Top = 288
-        Width = 75
-        Height = 25
-        Caption = #24320#22987#23398#20064
-        TabOrder = 23
-        OnClick = btn24Click
-      end
     end
     object grpUserKey: TGroupBox
       Left = 2
-      Top = 465
-      Width = 353
+      Top = 469
+      Width = 361
       Height = 184
       Align = alBottom
       Caption = #33258#23450#20041#25353#38190#65306
       TabOrder = 1
-      object btn26: TBitBtn
-        Left = 16
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #33258#23450#20041'1'
-        TabOrder = 0
-      end
-      object btn27: TBitBtn
-        Left = 80
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #33258#23450#20041'2'
-        TabOrder = 1
-      end
-      object btn28: TBitBtn
-        Left = 144
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #33258#23450#20041'3'
-        TabOrder = 2
-      end
-      object btn29: TBitBtn
-        Left = 208
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #33258#23450#20041'4'
-        TabOrder = 3
-      end
-      object btn30: TBitBtn
-        Left = 280
-        Top = 40
-        Width = 50
-        Height = 40
-        Caption = #33258#23450#20041'5'
-        TabOrder = 4
-      end
     end
     object cbbDevice: TComboBox
       Left = 104
@@ -443,8 +207,8 @@ object Form1: TForm1
         #36965#25511#22120'3')
     end
     object btn23: TBitBtn
-      Left = 272
-      Top = 88
+      Left = 280
+      Top = 40
       Width = 73
       Height = 25
       Caption = #20999#25442#36965#25511#22120
@@ -458,6 +222,7 @@ object Form1: TForm1
       Height = 25
       Caption = #26032#24314#36965#25511#22120
       TabOrder = 4
+      OnClick = btnNewClick
     end
     object btnDel: TBitBtn
       Left = 112
@@ -466,6 +231,7 @@ object Form1: TForm1
       Height = 25
       Caption = #21024#38500#36965#25511#22120
       TabOrder = 5
+      OnClick = btnDelClick
     end
     object btnModify: TBitBtn
       Left = 192
@@ -475,6 +241,15 @@ object Form1: TForm1
       Caption = #20462#25913
       TabOrder = 6
     end
+  end
+  object btn24: TBitBtn
+    Left = 528
+    Top = 88
+    Width = 75
+    Height = 25
+    Caption = #24320#22987#23398#20064
+    TabOrder = 4
+    OnClick = btn24Click
   end
   object com1: TYbCommDevice
     PortNo = 2

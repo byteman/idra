@@ -29,8 +29,9 @@ public:
      RemoteController();
     
      /*load 按键编码到红外发射器中*/
-     bool load(AnsiString name,IDraDevice* pIdra);
+     bool load(AnsiString name);
      int unLoad();
+     bool isLoad();
 
      /*判断键名是否存在*/
      bool existKeyName(AnsiString keyName);
@@ -52,8 +53,9 @@ public:
 
 private:
      TDeviceKeyMap  m_keyMap;
-     IDraDevice *m_idra;
+
      CppSQLite3DB m_db;
+     bool m_load;
 
 
      

@@ -51,6 +51,10 @@ bool RemoteControllerMgr::load()
     
     return true;
 }
+bool RemoteControllerMgr::existDevice( AnsiString& name)
+{
+
+}
 bool RemoteControllerMgr::setCurrentCtrlDevice(AnsiString deviceName)
 {
      if(!m_idra_ok) return false;
@@ -62,9 +66,129 @@ bool RemoteControllerMgr::setCurrentCtrlDevice(AnsiString deviceName)
      }
      m_curDev = new RemoteController();
      
-     if(!m_curDev->load(deviceName,&m_idra)) return false;
+     if(!m_curDev->load(deviceName)) return false;
 
      return true;
+}
+RemoteController* RemoteControllerMgr::createNewCtrlDevice(AnsiString& devName)
+{
+     bool ok = false;
+     CppSQLite3Buffer sql;
+     sql.format("insert or rollback into tbl_tv_devices (name) values(%Q)",devName);
+
+     try{
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+     if(!ok) return NULL;
+     ok = false;
+     sql.format("CREATE TABLE tbl_ctrl_%s ([key] TEXT(50) NOT NULL, codec TEXT);", devName);
+
+     try
+     {
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+     if(!ok) return NULL;
+
+     if(!setCurrentCtrlDevice(devName)) return NULL;
+
+     return getCurrentCtrlDevice();
+}
+RemoteController* RemoteControllerMgr::createNewCtrlDevice(RemoteControlInfo& info)
+{
+     bool ok = false;
+     CppSQLite3Buffer sql;
+     sql.format("insert or rollback into tbl_tv_devices (name,vendor) values(%Q,%Q)",info.m_name,info.m_vendor);
+
+     try{
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+     if(!ok) return NULL;
+     ok = false;
+     sql.format("CREATE TABLE tbl_ctrl_%s ([key] TEXT(50] NOT NULL, codec TEXT)", info.m_name);
+
+      try{
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+     if(!ok) return NULL;
+
+     if(!setCurrentCtrlDevice(info.m_name)) return NULL;
+
+     return getCurrentCtrlDevice();
+
+}
+bool RemoteControllerMgr::deleteCtrlDevice(AnsiString& devName)
+{
+//
+     bool ok = false;
+     CppSQLite3Buffer sql;
+     sql.format("delete or rollback  tbl_tv_devices where key=%Q",devName);
+
+     try{
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+     if(!ok) return NULL;
+     ok = false;
+     sql.format("DROP TABLE IF EXISTS tbl_ctrl_%s;", devName);
+
+     try
+     {
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+
+     return ok;
+
+}
+bool RemoteControllerMgr::existDeviceName(AnsiString deviceName)
+{
+     return (m_device_info_list.find(deviceName) != m_device_info_list.end());
 }
 RemoteController* RemoteControllerMgr::getCurrentCtrlDevice()
 {

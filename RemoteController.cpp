@@ -11,13 +11,12 @@
 
 RemoteController::RemoteController()
 {
-     m_idra = NULL;
      m_name = "";
 }
-bool RemoteController::load(AnsiString name,IDraDevice* pIdra)
+bool RemoteController::load(AnsiString name)
 {
     m_name = name ;
-    m_idra = pIdra;
+
     m_db.open("idra.db3");
 
     CppSQLite3Buffer sql;
@@ -36,17 +35,24 @@ bool RemoteController::load(AnsiString name,IDraDevice* pIdra)
     }
     qry.finalize();
 
+    m_load = true;
     return true;
       
 }
 int RemoteController::unLoad()
 {
-    m_db.close();
+    //m_db.close();
+    m_name = "";
+    m_load = false;
+    
 }
 bool RemoteController::existKeyName(AnsiString keyName)
 {
    bool exist = false;
 
+   if(!m_load) return false;
+
+   
    CppSQLite3Buffer sql;
    sql.format("select * from tbl_ctrl_%s where key=%Q",m_name,keyName);
    CppSQLite3Query qry =  m_db.execQuery(sql);
@@ -62,7 +68,7 @@ bool RemoteController::updateKey(AnsiString keyName, AnsiString keyCodec)
 {
     CppSQLite3Buffer sql;
     sql.format("update or rollback tbl_ctrl_%s set codec=%Q where key=%Q",m_name, keyCodec,keyName);
-
+    if(!m_load) return false;
     try
     {
          int ret = m_db.execDML(sql);
@@ -84,7 +90,7 @@ bool RemoteController::addKey(AnsiString keyName, AnsiString keyCodec)
 {
     CppSQLite3Buffer sql;
     sql.format("insert or rollback into tbl_ctrl_%s (key,codec) values(%Q,%Q)",m_name, keyName, keyCodec);
-
+    if(!m_load) return false;
     try
     {
          int ret = m_db.execDML(sql);
@@ -105,6 +111,7 @@ bool RemoteController::addKey(AnsiString keyName, AnsiString keyCodec)
 
 bool RemoteController::getKeyCodec(AnsiString keyName,AnsiString &codec)
 {
+    if(!m_load) return false;
     if(m_keyMap.find(keyName) == m_keyMap.end())
     {
         return false;
@@ -119,6 +126,7 @@ bool RemoteController::getKeyCodec(AnsiString keyName,AnsiString &codec)
 
 bool RemoteController::listKey(TKeyNameList& keylist)
 {
+    if(!m_load) return false;
     TDeviceKeyMap::iterator iter = m_keyMap.begin();
     for( ; iter != m_keyMap.end(); iter++ )
     {
@@ -128,4 +136,8 @@ bool RemoteController::listKey(TKeyNameList& keylist)
     return true;
 
 
+}
+bool RemoteController::isLoad()
+{
+    return m_load;
 }
