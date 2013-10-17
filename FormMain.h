@@ -63,6 +63,8 @@ __published:	// IDE-managed Components
         void __fastcall onKeyClick(TObject *Sender);
         void __fastcall btnNewClick(TObject *Sender);
         void __fastcall btnDelClick(TObject *Sender);
+    void __fastcall btnModifyClick(TObject *Sender);
+    void __fastcall cbbDeviceDropDown(TObject *Sender);
 
 private:	// User declarations
     void __fastcall addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h);

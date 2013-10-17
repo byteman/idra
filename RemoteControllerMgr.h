@@ -22,6 +22,7 @@ public:
       RemoteController* createNewCtrlDevice(AnsiString& devName);
       bool deleteCtrlDevice(AnsiString& devName);
       bool existDeviceName(AnsiString deviceName);
+      bool updateDeviceName(AnsiString& curName, AnsiString &newName);
       TDeviceNameList  m_device_list;
       
       bool learnKey(AnsiString keyName, int timeS);

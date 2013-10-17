@@ -3,6 +3,7 @@
 #ifndef SysConfigH
 #define SysConfigH
 #include "CppSQLite3.h"
+#include <Classes.hpp>
 //---------------------------------------------------------------------------
 class SystemConfig
 {

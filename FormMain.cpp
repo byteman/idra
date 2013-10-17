@@ -189,6 +189,10 @@ void __fastcall TForm1::btn23Click(TObject *Sender)
 
         
      }
+     else
+     {
+         ShowMessage("ÇÐ»»Ê§°Ü");
+     }
 }
 //---------------------------------------------------------------------------
 
@@ -230,6 +234,27 @@ void __fastcall TForm1::btnDelClick(TObject *Sender)
         ShowMessage("É¾³ý³É¹¦");
     }
     else  ShowMessage("É¾³ýÊ§°Ü");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btnModifyClick(TObject *Sender)
+{
+     frmRemoteDev->ShowModal();
+     if(frmRemoteDev->isOk)
+     {
+         if(rcmgr.existDeviceName(cbbDevice->Text))
+         {
+            rcmgr.updateDeviceName(cbbDevice->Text,frmRemoteDev->devName);
+         }
+
+
+     }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::cbbDeviceDropDown(TObject *Sender)
+{
+    //
 }
 //---------------------------------------------------------------------------
 

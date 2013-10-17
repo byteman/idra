@@ -17,7 +17,7 @@ object frmRemoteDev: TfrmRemoteDev
   object grp1: TGroupBox
     Left = 0
     Top = 0
-    Width = 340
+    Width = 332
     Height = 113
     Align = alTop
     TabOrder = 0

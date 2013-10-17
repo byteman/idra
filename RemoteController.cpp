@@ -16,27 +16,35 @@ RemoteController::RemoteController()
 bool RemoteController::load(AnsiString name)
 {
     m_name = name ;
-
+    m_keyMap.clear();
     m_db.open("idra.db3");
 
     CppSQLite3Buffer sql;
     sql.format("select * from tbl_ctrl_%s",m_name);
-    CppSQLite3Query qry = m_db.execQuery(sql);
 
-    m_keyMap.clear();
-    
-    while(!qry.eof())
+    try
+    {
+        CppSQLite3Query qry = m_db.execQuery(sql);
+        while(!qry.eof())
+        {
+
+             AnsiString key = qry.fieldValue("key");
+             m_keyMap[key] =  qry.fieldValue("codec");
+
+             qry.nextRow();
+        }
+        qry.finalize();
+        m_load = true;
+
+        return true;
+    }
+    catch(CppSQLite3Exception& e)
     {
 
-         AnsiString key = qry.fieldValue("key");
-         m_keyMap[key] =  qry.fieldValue("codec");
-         
-         qry.nextRow();
-    }
-    qry.finalize();
 
-    m_load = true;
-    return true;
+    }
+
+    return false;
       
 }
 int RemoteController::unLoad()

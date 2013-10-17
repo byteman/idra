@@ -16,8 +16,10 @@ __fastcall TfrmRemoteDev::TfrmRemoteDev(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TfrmRemoteDev::FormShow(TObject *Sender)
 {
-              isOk = false;
-              devName = "";
+       isOk = false;
+       devName = "";
+       lblEdtName->Text = "";
+
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmRemoteDev::btnOkClick(TObject *Sender)

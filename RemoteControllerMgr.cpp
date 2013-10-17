@@ -16,7 +16,19 @@ RemoteControllerMgr::RemoteControllerMgr()
 }
 bool RemoteControllerMgr::openDevice(int port)
 {
-     if(!m_idra.openDev(port, 9600) == IDRA_ERR_OK) return false;
+     bool find = false;
+     if(!m_idra.openDev(port, 9600) == IDRA_ERR_OK)
+     {
+         for(int i = 1; i < 10; i++)
+         {
+              if(m_idra.openDev(port, 9600) == IDRA_ERR_OK)
+              {
+                  find = true;
+                  break;
+              }
+         }
+         if(!find) return false;
+     }
 
      m_idra_ok = true;
      return true;
@@ -108,6 +120,46 @@ RemoteController* RemoteControllerMgr::createNewCtrlDevice(AnsiString& devName)
 
      return getCurrentCtrlDevice();
 }
+
+bool RemoteControllerMgr::updateDeviceName(AnsiString& curName, AnsiString &newName)
+{
+     bool ok = false;
+     CppSQLite3Buffer sql;
+
+     if(existDeviceName(newName)) return false;
+     
+     sql.format("update or rollback tbl_tv_devices set name=%Q where name=%Q",newName,curName);
+
+     try{
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+
+     if(!ok) return false;
+     ok = false;
+     sql.format("alter table tbl_ctrl_%s rename to tbl_ctrl_%s",curName,newName);
+     try
+     {
+
+        m_db.execDML(sql);
+
+        ok = true;
+
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+     
+     return ok;
+}
 RemoteController* RemoteControllerMgr::createNewCtrlDevice(RemoteControlInfo& info)
 {
      bool ok = false;
@@ -152,7 +204,7 @@ bool RemoteControllerMgr::deleteCtrlDevice(AnsiString& devName)
 //
      bool ok = false;
      CppSQLite3Buffer sql;
-     sql.format("delete or rollback  tbl_tv_devices where key=%Q",devName);
+     sql.format("delete from tbl_tv_devices where name=%Q;",devName);
 
      try{
 
@@ -172,10 +224,9 @@ bool RemoteControllerMgr::deleteCtrlDevice(AnsiString& devName)
      try
      {
 
-        if( m_db.execDML(sql) > 0)
-        {
-            ok = true;
-        }
+        m_db.execDML(sql); //有可能没有这个表
+
+        ok = true;
      }
      catch(CppSQLite3Exception& e)
      {

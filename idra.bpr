@@ -6,7 +6,7 @@
     <PROJECT value="idra.exe"/>
     <OBJFILES value="idra.obj FormMain.obj sqlite3.obj CppSQLite3.obj RemoteController.obj 
       IdraDevice.obj FormIdraSet.obj FormKey.obj RemoteControllerMgr.obj 
-      FormRemoteController.obj SysConfig.obj"/>
+      FormRemoteController.obj SysConfig.obj ByConfig.obj ByDBConfig.obj"/>
     <RESFILES value="idra.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -71,6 +71,8 @@
       <FILE FILENAME="pcommb.lib" FORMNAME="" UNITNAME="pcommb.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="FormRemoteController.cpp" FORMNAME="frmRemoteDev" UNITNAME="FormRemoteController" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="SysConfig.cpp" FORMNAME="" UNITNAME="SysConfig" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ByConfig.cpp" FORMNAME="" UNITNAME="ByConfig.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ByDBConfig.cpp" FORMNAME="" UNITNAME="ByDBConfig.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
