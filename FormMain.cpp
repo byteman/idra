@@ -224,7 +224,12 @@ void __fastcall TForm1::btnNewClick(TObject *Sender)
 
 void __fastcall TForm1::btnDelClick(TObject *Sender)
 {
-   //     
+   //
+    if(rcmgr.deleteCtrlDevice(cbbDevice->Text))
+    {
+        ShowMessage("É¾³ý³É¹¦");
+    }
+    else  ShowMessage("É¾³ýÊ§°Ü");
 }
 //---------------------------------------------------------------------------
 

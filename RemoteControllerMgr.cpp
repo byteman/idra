@@ -62,7 +62,6 @@ bool RemoteControllerMgr::setCurrentCtrlDevice(AnsiString deviceName)
      if(m_curDev)
      {
          delete m_curDev;
-
      }
      m_curDev = new RemoteController();
      
