@@ -9,13 +9,16 @@
 //---------------------------------------------------------------------------
 
 typedef std::vector<AnsiString> TDeviceNameList;
+typedef std::vector<RemoteController*> TDeviceMap;
 class RemoteControllerMgr
 {
 public:
       RemoteControllerMgr();
       bool load();
-      bool openDevice(int port);
-      bool existDevice( AnsiString& name);
+      bool unLoad();
+      bool openDevice(int port = 1);
+
+      RemoteController* existDevice( AnsiString& name);
       bool setCurrentCtrlDevice(AnsiString deviceName);
       RemoteController* getCurrentCtrlDevice();
       RemoteController* createNewCtrlDevice(RemoteControlInfo& info);
@@ -23,15 +26,18 @@ public:
       bool deleteCtrlDevice(AnsiString& devName);
       bool existDeviceName(AnsiString deviceName);
       bool updateDeviceName(AnsiString& curName, AnsiString &newName);
+      size_t listAllDevice(TDeviceNameList& devList);
       TDeviceNameList  m_device_list;
       
       bool learnKey(AnsiString keyName, int timeS);
       bool sendKey(AnsiString keyName);
 private:
+      void deleteFromDeviceList(AnsiString &name);
       CppSQLite3DB m_db;
       IDraDevice   m_idra;
-      TDeviceInfo  m_device_info_list;
       RemoteController *m_curDev;
+      TDeviceMap   m_devices;
+      int          m_port;
       bool m_idra_ok;
 
 };

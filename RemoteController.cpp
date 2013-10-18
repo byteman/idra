@@ -9,13 +9,26 @@
 
 #pragma package(smart_init)
 
-RemoteController::RemoteController()
+
+RemoteController::~RemoteController()
 {
-     m_name = "";
+     if(m_info)
+     {
+         delete m_info;
+         m_info  = NULL;
+     }
+
 }
-bool RemoteController::load(AnsiString name)
+RemoteController::RemoteController(RemoteControlInfo* pInfo):
+        m_load(false)
 {
-    m_name = name ;
+    m_name = pInfo->m_name;
+    m_info = pInfo;
+    m_keyMap.clear();
+
+}
+bool RemoteController::load()
+{
     m_keyMap.clear();
     m_db.open("idra.db3");
 
@@ -27,10 +40,11 @@ bool RemoteController::load(AnsiString name)
         CppSQLite3Query qry = m_db.execQuery(sql);
         while(!qry.eof())
         {
-
-             AnsiString key = qry.fieldValue("key");
-             m_keyMap[key] =  qry.fieldValue("codec");
-
+             TKey key;
+             AnsiString name    =  qry.fieldValue("key");
+             key.codec          =  qry.fieldValue("codec");
+             key.keyType        =  qry.getIntField("type");
+             m_keyMap[name]     =  key;
              qry.nextRow();
         }
         qry.finalize();
@@ -60,14 +74,21 @@ bool RemoteController::existKeyName(AnsiString keyName)
 
    if(!m_load) return false;
 
-   
-   CppSQLite3Buffer sql;
-   sql.format("select * from tbl_ctrl_%s where key=%Q",m_name,keyName);
-   CppSQLite3Query qry =  m_db.execQuery(sql);
+   try
+   {
+       CppSQLite3Buffer sql;
+       sql.format("select * from tbl_ctrl_%s where key=%Q",m_name,keyName);
+       CppSQLite3Query qry =  m_db.execQuery(sql);
 
-   if(!qry.eof()) exist = true;
+       if(!qry.eof()) exist = true;
 
-   qry.finalize();
+       qry.finalize();
+   }
+   catch(CppSQLite3Exception& e)
+   {
+
+   }
+
 
    return exist;
 }
@@ -94,10 +115,10 @@ bool RemoteController::updateKey(AnsiString keyName, AnsiString keyCodec)
     return false;
    
 }
-bool RemoteController::addKey(AnsiString keyName, AnsiString keyCodec)
+bool RemoteController::addKey(AnsiString keyName, AnsiString keyCodec,TKeyType type)
 {
     CppSQLite3Buffer sql;
-    sql.format("insert or rollback into tbl_ctrl_%s (key,codec) values(%Q,%Q)",m_name, keyName, keyCodec);
+    sql.format("insert or rollback into tbl_ctrl_%s (key,codec,type) values(%Q,%Q,%d)",m_name, keyName, keyCodec,type);
     if(!m_load) return false;
     try
     {
@@ -116,7 +137,13 @@ bool RemoteController::addKey(AnsiString keyName, AnsiString keyCodec)
     return false;
    
 }
+bool  RemoteController::setDeviceName(AnsiString name)
+{
+    m_name = name;
+    if(m_info) m_info->m_name = name;
 
+    return true;
+}
 bool RemoteController::getKeyCodec(AnsiString keyName,AnsiString &codec)
 {
     if(!m_load) return false;
@@ -124,21 +151,20 @@ bool RemoteController::getKeyCodec(AnsiString keyName,AnsiString &codec)
     {
         return false;
     }
-    codec = m_keyMap[keyName];
+    codec = m_keyMap[keyName].codec;
 
     return true;
 
 }
 
-
-
-bool RemoteController::listKey(TKeyNameList& keylist)
+bool RemoteController::listKey(TKeyNameList& keylist,TKeyType type)
 {
     if(!m_load) return false;
     TDeviceKeyMap::iterator iter = m_keyMap.begin();
     for( ; iter != m_keyMap.end(); iter++ )
     {
-       keylist.push_back(iter->first);
+       if(iter->second.keyType == type)
+           keylist.push_back(iter->first);
     }
 
     return true;

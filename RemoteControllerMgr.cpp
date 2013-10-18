@@ -9,82 +9,127 @@
 
 #pragma package(smart_init)
 
-RemoteControllerMgr::RemoteControllerMgr()
+RemoteControllerMgr::RemoteControllerMgr():
+        m_idra_ok(false),
+        m_curDev(NULL),
+        m_port(0)
 {
-      m_idra_ok = false;
-      m_curDev  = NULL;
+        //
 }
 bool RemoteControllerMgr::openDevice(int port)
 {
-     bool find = false;
+     m_idra_ok = false;
      if(!m_idra.openDev(port, 9600) == IDRA_ERR_OK)
      {
          for(int i = 1; i < 10; i++)
          {
               if(m_idra.openDev(port, 9600) == IDRA_ERR_OK)
               {
-                  find = true;
+                  m_idra_ok = true;
+                  m_port    = port;
                   break;
               }
          }
-         if(!find) return false;
+         return m_idra_ok;
      }
-
      m_idra_ok = true;
+     m_port = port;
      return true;
+}
+bool RemoteControllerMgr::unLoad()
+{
+     for(size_t i = 0 ; i < m_devices.size(); i++)
+     {
+         if(m_devices.at(i) != NULL)
+         {
+             delete  m_devices.at(i);
+         }
+
+     }
+     m_devices.clear();
 }
 bool RemoteControllerMgr::load()
 {
-    m_db.open("idra.db3");
-
-    CppSQLite3Query qry =  m_db.execQuery("select * from tbl_tv_devices ");
-
-    while(!qry.eof())
+    try
     {
-         RemoteControlInfo  m_info;
-         m_info.m_name = qry.fieldValue("name");
-         m_info.m_vendor = qry.fieldValue("vendor");
-         m_info.m_softVer = qry.fieldValue("version");
-         m_info.m_city = qry.fieldValue("city");
-         m_info.m_hardVer = qry.fieldValue("hardVer");
-         m_info.m_platform = qry.fieldValue("platform");
-         m_info.m_cpu = qry.fieldValue("cpu");
+          m_db.open("idra.db3");
 
-         m_device_info_list[m_info.m_name] = m_info;
-         m_device_list.push_back(m_info.m_name);
+          CppSQLite3Query qry =  m_db.execQuery("select * from tbl_tv_devices ");
 
-         qry.nextRow();
+          unLoad();
 
+          while(!qry.eof())
+          {
+               RemoteControlInfo  *m_info = new RemoteControlInfo();
+               m_info->m_name = qry.fieldValue("name");
+               m_info->m_vendor = qry.fieldValue("vendor");
+               m_info->m_softVer = qry.fieldValue("version");
+               m_info->m_city = qry.fieldValue("city");
+               m_info->m_hardVer = qry.fieldValue("hardVer");
+               m_info->m_platform = qry.fieldValue("platform");
+               m_info->m_cpu = qry.fieldValue("cpu");
+
+               RemoteController* pDev = new  RemoteController(m_info);
+               if(!pDev->load())
+               {
+                    //加载码表不成功。
+               }
+               m_devices.push_back(pDev);
+
+               qry.nextRow();
+
+
+          }
+
+          qry.finalize();
+
+          return true;
+
+    }
+    catch(CppSQLite3Exception& e)
+    {
 
     }
 
-    qry.finalize();
-
-    
-    return true;
+    return false;
 }
-bool RemoteControllerMgr::existDevice( AnsiString& name)
+RemoteController* RemoteControllerMgr::existDevice( AnsiString& name)
 {
+     RemoteController* pDev = NULL;
 
+     for(size_t i = 0 ; i < m_devices.size(); i++)
+     {
+         if(m_devices.at(i)->m_name == name)
+         {
+             pDev  =  m_devices.at(i);
+             break;
+         }
+
+     }
+     return pDev;
 }
 bool RemoteControllerMgr::setCurrentCtrlDevice(AnsiString deviceName)
 {
      if(!m_idra_ok) return false;
 
-     if(m_curDev)
-     {
-         delete m_curDev;
-     }
-     m_curDev = new RemoteController();
-     
-     if(!m_curDev->load(deviceName)) return false;
+     RemoteController* pDev =  existDevice(deviceName);
+     if(pDev == NULL) return false;
+
+     m_curDev = pDev;
 
      return true;
 }
 RemoteController* RemoteControllerMgr::createNewCtrlDevice(AnsiString& devName)
 {
      bool ok = false;
+
+     RemoteController* pDev =  existDevice(devName);
+     
+     if(pDev) return NULL; //设备已经存在.
+     
      CppSQLite3Buffer sql;
+
+     
      sql.format("insert or rollback into tbl_tv_devices (name) values(%Q)",devName);
 
      try{
@@ -100,7 +145,7 @@ RemoteController* RemoteControllerMgr::createNewCtrlDevice(AnsiString& devName)
      }
      if(!ok) return NULL;
      ok = false;
-     sql.format("CREATE TABLE tbl_ctrl_%s ([key] TEXT(50) NOT NULL, codec TEXT);", devName);
+     sql.format("CREATE TABLE tbl_ctrl_%s ([key] TEXT(50) NOT NULL, codec TEXT,type  INT  NOT NULL );", devName);
 
      try
      {
@@ -115,10 +160,16 @@ RemoteController* RemoteControllerMgr::createNewCtrlDevice(AnsiString& devName)
 
      }
      if(!ok) return NULL;
+//////////////////////////add new device to devices list////////////////////////////////////
+     RemoteControlInfo  *m_info = new RemoteControlInfo();
+     m_info->m_name =  devName;
+     
+     pDev = new RemoteController(m_info);
 
-     if(!setCurrentCtrlDevice(devName)) return NULL;
+     m_devices.push_back(pDev);
+////////////////////////////////////////////////////////////////     
+     return pDev;
 
-     return getCurrentCtrlDevice();
 }
 
 bool RemoteControllerMgr::updateDeviceName(AnsiString& curName, AnsiString &newName)
@@ -126,7 +177,7 @@ bool RemoteControllerMgr::updateDeviceName(AnsiString& curName, AnsiString &newN
      bool ok = false;
      CppSQLite3Buffer sql;
 
-     if(existDeviceName(newName)) return false;
+     if(existDevice(newName)) return false;
      
      sql.format("update or rollback tbl_tv_devices set name=%Q where name=%Q",newName,curName);
 
@@ -157,46 +208,29 @@ bool RemoteControllerMgr::updateDeviceName(AnsiString& curName, AnsiString &newN
      {
 
      }
-     
+     RemoteController* pDev = existDevice(curName);
+     if(pDev->setDeviceName(newName))
+     {
+          //
+     }
      return ok;
 }
-RemoteController* RemoteControllerMgr::createNewCtrlDevice(RemoteControlInfo& info)
+
+size_t RemoteControllerMgr::listAllDevice(TDeviceNameList& devList)
 {
-     bool ok = false;
-     CppSQLite3Buffer sql;
-     sql.format("insert or rollback into tbl_tv_devices (name,vendor) values(%Q,%Q)",info.m_name,info.m_vendor);
-
-     try{
-
-        if( m_db.execDML(sql) > 0)
-        {
-            ok = true;
-        }
-     }
-     catch(CppSQLite3Exception& e)
+     devList.clear();
+     for(size_t i = 0 ; i < m_devices.size(); i++)
      {
-
+         //
+         devList.push_back(m_devices.at(i)->m_name);
      }
-     if(!ok) return NULL;
-     ok = false;
-     sql.format("CREATE TABLE tbl_ctrl_%s ([key] TEXT(50] NOT NULL, codec TEXT)", info.m_name);
 
-      try{
-
-        if( m_db.execDML(sql) > 0)
-        {
-            ok = true;
-        }
-     }
-     catch(CppSQLite3Exception& e)
-     {
-
-     }
-     if(!ok) return NULL;
-
-     if(!setCurrentCtrlDevice(info.m_name)) return NULL;
-
-     return getCurrentCtrlDevice();
+     return devList.size();
+}
+void RemoteControllerMgr::deleteFromDeviceList(AnsiString &name)
+{
+    for(TDeviceMap::iterator it = m_devices.begin(); it!=m_devices.end(); )
+    {        if((*it)->m_name == name)        {            it = m_devices.erase(it);  //正确的做法，erase返回下一个有效it        }        else        {            it++;        }    }
 
 }
 bool RemoteControllerMgr::deleteCtrlDevice(AnsiString& devName)
@@ -233,36 +267,39 @@ bool RemoteControllerMgr::deleteCtrlDevice(AnsiString& devName)
 
      }
 
+     //delete from memory list
+
+     deleteFromDeviceList(devName);
+     
      return ok;
 
 }
-bool RemoteControllerMgr::existDeviceName(AnsiString deviceName)
-{
-     return (m_device_info_list.find(deviceName) != m_device_info_list.end());
-}
+
 RemoteController* RemoteControllerMgr::getCurrentCtrlDevice()
 {
      return  m_curDev;
 }
+//为当前遥控器学习按键编码
 bool RemoteControllerMgr::learnKey(AnsiString keyName, int timeS)
 {
     if(!m_idra_ok) return false;
-
+    if(!m_curDev)  return false;
+    
     char codec[128] = {0,};
 
     if(m_idra.learnKey((unsigned char*)codec, timeS) != IDRA_ERR_OK) return false;
 
-    if(m_curDev->existKeyName(keyName))
+    if(m_curDev->existKeyName(keyName))   //修改按键编码
     {
         return m_curDev->updateKey(keyName, codec);
     }
 
-    return m_curDev->addKey(keyName, codec);
+    return m_curDev->addKey(keyName, codec); //新增加按键编码
 }
+//通过当前遥控器发送编码
 bool RemoteControllerMgr::sendKey(AnsiString keyName)
 {
-    if(!m_idra_ok) return false;
-
+    if(!m_idra_ok)       return false;
     if(m_curDev == NULL) return false;
 
     unsigned char cmd[128];

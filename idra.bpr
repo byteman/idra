@@ -6,7 +6,7 @@
     <PROJECT value="idra.exe"/>
     <OBJFILES value="idra.obj FormMain.obj sqlite3.obj CppSQLite3.obj RemoteController.obj 
       IdraDevice.obj FormIdraSet.obj FormKey.obj RemoteControllerMgr.obj 
-      FormRemoteController.obj SysConfig.obj ByConfig.obj ByDBConfig.obj"/>
+      FormRemoteController.obj SysConfig.obj"/>
     <RESFILES value="idra.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -71,8 +71,6 @@
       <FILE FILENAME="pcommb.lib" FORMNAME="" UNITNAME="pcommb.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="FormRemoteController.cpp" FORMNAME="frmRemoteDev" UNITNAME="FormRemoteController" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="SysConfig.cpp" FORMNAME="" UNITNAME="SysConfig" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="ByConfig.cpp" FORMNAME="" UNITNAME="ByConfig.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="ByDBConfig.cpp" FORMNAME="" UNITNAME="ByDBConfig.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -115,9 +113,10 @@ Item1=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Proj
 Item2=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;$(BCB)\include;$(BCB)\include\vcl;E:\res\suipacktrial\Source\BCB6;$(TEEINCPATH)
 
 [HistoryLists\hlLibraryPath]
-Count=2
-Item0=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib
-Item1=C:\Program Files\Raize\RC3\LibBCB6;F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib;E:\res\suipacktrial\Source\BCB6
+Count=3
+Item0=F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item1=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item2=C:\Program Files\Raize\RC3\LibBCB6;F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib;E:\res\suipacktrial\Source\BCB6
 
 [HistoryLists\hlDebugSourcePath]
 Count=1

@@ -39,7 +39,7 @@ __published:	// IDE-managed Components
         TListBox *lstStatus;
         TGroupBox *grp5;
         TMemo *mmoInfo;
-        TRzStatusPane *rzstspn1;
+        TRzStatusPane *statusName;
         TRzStatusPane *rzstspn2;
         TRzStatusPane *rzstspn3;
         TPopupMenu *pm1;
@@ -48,27 +48,36 @@ __published:	// IDE-managed Components
         TBitBtn *btnRecord;
         TLabel *lbl1;
         TComboBox *cbbDevice;
-        TBitBtn *btn23;
         TBitBtn *btnNew;
         TBitBtn *btnDel;
         TBitBtn *btnModify;
         TMenuItem *mmAddKey;
-        TBitBtn *btn24;
+        TBitBtn *btnLearn;
+        TShape *shpIdra;
     void __fastcall FormCreate(TObject *Sender);
         void __fastcall mmIdraClick(TObject *Sender);
         void __fastcall mmAddKeyClick(TObject *Sender);
-        void __fastcall btn24Click(TObject *Sender);
-        void __fastcall btnPlayClick(TObject *Sender);
-        void __fastcall btn23Click(TObject *Sender);
+        void __fastcall btnLearnClick(TObject *Sender);
         void __fastcall onKeyClick(TObject *Sender);
         void __fastcall btnNewClick(TObject *Sender);
         void __fastcall btnDelClick(TObject *Sender);
     void __fastcall btnModifyClick(TObject *Sender);
-    void __fastcall cbbDeviceDropDown(TObject *Sender);
+        void __fastcall cbbDeviceChange(TObject *Sender);
+        void __fastcall btnAddUserKeyMouseUp(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall grpUserKeyMouseUp(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall N1Click(TObject *Sender);
 
 private:	// User declarations
-    void __fastcall addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h);
+    TButton* __fastcall addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h);
     void __fastcall loadKeys(void);
+    void __fastcall updateDeviceList();
+    void __fastcall updateDeviceStatus();
+    void __fastcall updateIdraStatus(bool on);
+    void __fastcall disableWork(bool yes);
+    void __fastcall updateKeyStatus();
+    void __fastcall enableAllKey(bool en=true);
 
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);
