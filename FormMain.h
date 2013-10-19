@@ -85,7 +85,7 @@ private:	// User declarations
     void __fastcall loadKeys(void);
     bool __fastcall changeDevice(AnsiString name);
     void __fastcall updateDeviceList();
-    void __fastcall updateCurrDeviceName();
+    void __fastcall updateCurrDevice();
     void __fastcall updateIdraStatus(bool on);
     void __fastcall disableWork(bool yes);
     void __fastcall updateKeyStatus();
@@ -94,6 +94,7 @@ private:	// User declarations
     void __fastcall delDevice(TObject *Sender);
     void __fastcall modifyDevice(TObject *Sender);
     void __fastcall learnKey(TObject *Sender);
+    int  __fastcall findItem(AnsiString item);
 
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

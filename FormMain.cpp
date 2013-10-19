@@ -54,15 +54,27 @@ void __fastcall TForm1::loadKeys(void)
      RemoteControllerMgr::get()->listKey(nameList, TYPE_USER);
      keyGroupUser->clearButtons();
      keyGroupUser->addKeyButtonGroup(nameList);
-     
+
+     updateKeyStatus(); //更新按键状态
 }
 
-void __fastcall TForm1::updateCurrDeviceName()
+int  __fastcall TForm1::findItem(AnsiString item)
+{
+    for(int i = 0; i < cbbDevice->Items->Count; i++)
+    {
+       if(item == cbbDevice->Items->Strings[i])
+            return i;
+    }
+    return -1;
+}
+void __fastcall TForm1::updateCurrDevice()
 {
      AnsiString deviceName;
+
+     updateDeviceList();
      if( RemoteControllerMgr::get()->getCurrentCtrlDeviceName(deviceName) )
      {
-        cbbDevice->Text = deviceName;
+        cbbDevice->ItemIndex = findItem(deviceName);
         statusName->Caption      = "当前遥控器为:"+deviceName;
      }
      else statusName->Caption = "没有选中遥控器";
@@ -77,8 +89,6 @@ void __fastcall TForm1::updateDeviceList()
      {
         cbbDevice->AddItem(devList.at(i), this);
      }
-     updateCurrDeviceName();
-
 }
 
 void __fastcall TForm1::updateIdraStatus(bool on)
@@ -123,10 +133,12 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
       else
       {
           RemoteControllerMgr::get()->load();
-          updateDeviceList();
+          updateCurrDevice();
           updateIdraStatus(true);
           disableWork(false);
       }
+
+      //cbbDevice->Handle
 
 
 }
@@ -179,19 +191,25 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
 
 void __fastcall TForm1::addDevice(TObject *Sender)
 {
-      frmRemoteDev->ShowModal();
+     AnsiString newDeviceName = "";
+     frmRemoteDev->ShowModal();
+     newDeviceName = frmRemoteDev->devName;
      if(frmRemoteDev->isOk)
      {
-         if(RemoteControllerMgr::get()->existDevice(frmRemoteDev->devName))
+         if(RemoteControllerMgr::get()->existDevice(newDeviceName))
          {
             ShowMessage("该遥控器已经存在了");
          }
          else
          {
-            if(RemoteControllerMgr::get()->createNewCtrlDevice(frmRemoteDev->devName))
+            if(RemoteControllerMgr::get()->createNewCtrlDevice(newDeviceName))
             {
-                cbbDevice->Text = frmRemoteDev->devName;
-                ShowMessage("遥控器新建成功");
+                
+                if(!changeDevice(newDeviceName))
+                {
+                    ShowMessage("切换失败");
+                }
+                //ShowMessage("遥控器新建成功");
             }
             else
             {
@@ -200,7 +218,7 @@ void __fastcall TForm1::addDevice(TObject *Sender)
          }
 
      }
-     updateDeviceList();
+     //updateDeviceList();
 
 }
 void __fastcall TForm1::delDevice(TObject *Sender)
@@ -221,11 +239,15 @@ void __fastcall TForm1::delDevice(TObject *Sender)
 
     if(RemoteControllerMgr::get()->deleteCtrlDevice(cbbDevice->Text))
     {
-        ShowMessage("删除成功");
+        //ShowMessage("删除成功");
     }
     else  ShowMessage("删除失败");
 
-    updateDeviceList();
+    if(cbbDevice->Items->Count > 0)
+    {
+        changeDevice(cbbDevice->Items->Strings[0]);
+    }
+
 }
 void __fastcall TForm1::btnDelClick(TObject *Sender)
 {
@@ -239,12 +261,15 @@ void __fastcall TForm1::modifyDevice(TObject *Sender)
      {
          if(RemoteControllerMgr::get()->existDevice(cbbDevice->Text))
          {
-            RemoteControllerMgr::get()->updateDeviceName(cbbDevice->Text,frmRemoteDev->devName);
+             if(RemoteControllerMgr::get()->updateDeviceName(cbbDevice->Text,frmRemoteDev->devName))
+             {
+                  changeDevice(frmRemoteDev->devName);
+             }
          }
 
 
      }
-     updateDeviceList();
+
 }
 void __fastcall TForm1::btnModifyClick(TObject *Sender)
 {
@@ -274,9 +299,9 @@ bool __fastcall TForm1::changeDevice(AnsiString name)
          return false;
      }
 
-     loadKeys();
-     updateCurrDeviceName();
-     updateKeyStatus();
+     loadKeys(); //加载按键GUI
+     updateCurrDevice();   //更新
+
 
      return true;
 }
@@ -321,7 +346,7 @@ void __fastcall TForm1::mmKeyAddClick(TObject *Sender)
              TKeyNameList keyList;
              AnsiString   deviceName;
 
-             if(RemoteControllerMgr::get()->getCurrentCtrlDeviceName(deviceName))
+             if(!RemoteControllerMgr::get()->getCurrentCtrlDeviceName(deviceName))
              {
                  ShowMessage("没有选择遥控器");
                  return;
@@ -421,4 +446,5 @@ void __fastcall TForm1::btnLearnClick(TObject *Sender)
       learnKey(Sender);
 }
 //---------------------------------------------------------------------------
+
 

@@ -208,9 +208,7 @@ object Form1: TForm1
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
-      ItemIndex = 0
       TabOrder = 2
-      Text = #36965#25511#22120'1'
       OnChange = cbbDeviceChange
       Items.Strings = (
         #36965#25511#22120'1'
