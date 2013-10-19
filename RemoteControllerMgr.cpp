@@ -9,12 +9,28 @@
 
 #pragma package(smart_init)
 
+static const char* gStandKeyList[] =
+{
+        "待机","静音","首页","菜单","确定",
+        "向上","向下","向左","向右","返回",
+        "退出","1",   "2",   "3",   "4",
+        "5",   "6",   "7",   "8",   "9",
+        "0",  "删除"
+};
+
+#define STAND_KEY_NUM (sizeof(gStandKeyList)/sizeof(char*))
+size_t RemoteControllerMgr::getStandKeyList(TKeyNameList& list)
+{
+     list = m_standKey_list;
+}
+
 RemoteControllerMgr::RemoteControllerMgr():
         m_idra_ok(false),
         m_curDev(NULL),
         m_port(0)
 {
-        //
+        for(int i = 0; i < STAND_KEY_NUM; i++)
+        m_standKey_list.push_back(gStandKeyList[i]);
 }
 bool RemoteControllerMgr::openDevice(int port)
 {
@@ -270,17 +286,33 @@ bool RemoteControllerMgr::deleteCtrlDevice(AnsiString& devName)
      //delete from memory list
 
      deleteFromDeviceList(devName);
-     
+
+     if(m_devices.size() > 0)
+        m_curDev = m_devices.at(0);
+     else    m_curDev = NULL;
+     //setCurrentCtrlDevice();
+
      return ok;
 
 }
+bool RemoteControllerMgr::getCurrentCtrlDeviceName(AnsiString &name)
+{
+    if(m_curDev == NULL) return false;
 
+    name = m_curDev->m_name;
+    return true;
+}
+bool RemoteControllerMgr::listKey(TKeyNameList& keylist,TKeyType type)
+{
+     if(m_curDev == NULL) return false;
+     return m_curDev->listKey(keylist,type);
+}
 RemoteController* RemoteControllerMgr::getCurrentCtrlDevice()
 {
      return  m_curDev;
 }
 //为当前遥控器学习按键编码
-bool RemoteControllerMgr::learnKey(AnsiString keyName, int timeS)
+bool RemoteControllerMgr::learnKey(AnsiString keyName,int timeS)
 {
     if(!m_idra_ok) return false;
     if(!m_curDev)  return false;
@@ -293,8 +325,10 @@ bool RemoteControllerMgr::learnKey(AnsiString keyName, int timeS)
     {
         return m_curDev->updateKey(keyName, codec);
     }
+    TKeyType type = TYPE_USER;
+    if(isStandKey(keyName))type = TYPE_STAND;
 
-    return m_curDev->addKey(keyName, codec); //新增加按键编码
+    return m_curDev->addKey(keyName, codec, type); //新增加按键编码
 }
 //通过当前遥控器发送编码
 bool RemoteControllerMgr::sendKey(AnsiString keyName)
@@ -310,4 +344,24 @@ bool RemoteControllerMgr::sendKey(AnsiString keyName)
     
     return (m_idra.sendKey(cmd) == IDRA_ERR_OK);
 
+}
+
+static  RemoteControllerMgr *mgr = NULL;
+RemoteControllerMgr* RemoteControllerMgr::get()
+{
+     if(mgr == NULL)
+     {
+         mgr = new RemoteControllerMgr();
+     }
+     return mgr;
+}
+bool RemoteControllerMgr::isStandKey(AnsiString keyName)
+{
+   //
+   for(size_t i = 0 ;i <  m_standKey_list.size(); i++)
+   {
+       if(keyName == m_standKey_list.at(i))
+          return true;
+   }
+   return false;
 }

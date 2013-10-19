@@ -80,6 +80,7 @@ private:
      RemoteControlInfo *m_info;
      CppSQLite3DB       m_db;
      bool m_load;
+     
 
 
      

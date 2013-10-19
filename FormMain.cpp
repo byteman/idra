@@ -10,6 +10,7 @@
 #include "CppSQLite3.h"
 #include "RemoteControllerMgr.h"
 #include "FormRemoteController.h"
+#include "KeyGroup.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -20,10 +21,9 @@
 TForm1 *Form1;
 
 static bool bLearn = false;
-static RemoteController* gDev = NULL;
-
-static RemoteControllerMgr rcmgr;
-
+static KeyGroup* keyGroupUser = NULL;
+static KeyGroup* keyGroupStand = NULL;
+static TButton*  pSelectButton = NULL;
 typedef std::map<AnsiString,TButton*> TButtonMap;
 static const char* gStandKeyList[] =
 {
@@ -33,8 +33,8 @@ static const char* gStandKeyList[] =
         "5",   "6",   "7",   "8",   "9",
         "0",  "删除"
 };
-#define STAND_KEY_NUM (sizeof(gStandKeyList)/sizeof(char*))
-static TButtonMap buttonList;
+
+
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
@@ -43,27 +43,27 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::loadKeys(void)
 {
-       TKeyNameList keyList;
+     TKeyNameList nameList;
+     if(keyGroupStand->getKeyNum() == 0)
+     {
+         RemoteControllerMgr::get()->getStandKeyList(nameList);
+         keyGroupStand->addKeyButtonGroup(nameList);
+     }
 
-       int left ,top;
-       int w = 60;
-       int h = 50;
-       int n = 5;
-       int left_align = (grpStandKey->Width  - (n*w) )/2 ;
-       int top_align  = (grpStandKey->Height - (n*h) )/2 ;
-       for(int i = 0; i < STAND_KEY_NUM; i++)
-       {
-             addKeyButton(gStandKeyList[i], grpStandKey, left_align +(i%n)*w, top_align +(i/n)*h,w,h);
-       }
+     nameList.clear();
+     RemoteControllerMgr::get()->listKey(nameList, TYPE_USER);
+     keyGroupUser->clearButtons();
+     keyGroupUser->addKeyButtonGroup(nameList);
+     
 }
 
-void __fastcall TForm1::updateDeviceStatus()
+void __fastcall TForm1::updateCurrDeviceName()
 {
-     RemoteController* pDev = rcmgr.getCurrentCtrlDevice();
-     if(pDev)
+     AnsiString deviceName;
+     if( RemoteControllerMgr::get()->getCurrentCtrlDeviceName(deviceName) )
      {
-        cbbDevice->Text = pDev->m_name;
-        statusName->Caption      = "当前遥控器为:"+pDev->m_name;
+        cbbDevice->Text = deviceName;
+        statusName->Caption      = "当前遥控器为:"+deviceName;
      }
      else statusName->Caption = "没有选中遥控器";
 }
@@ -71,13 +71,13 @@ void __fastcall TForm1::updateDeviceList()
 {
      TDeviceNameList devList;
 
-     size_t num = rcmgr.listAllDevice(devList);
+     size_t num = RemoteControllerMgr::get()->listAllDevice(devList);
      cbbDevice->Clear();
      for(size_t i = 0; i < num ; i++)
      {
         cbbDevice->AddItem(devList.at(i), this);
      }
-     updateDeviceStatus();
+     updateCurrDeviceName();
 
 }
 
@@ -104,53 +104,49 @@ void __fastcall TForm1::disableWork(bool yes)
 }
 void __fastcall TForm1::FormCreate(TObject *Sender)
 {
-      if(!rcmgr.openDevice(6))
+      keyGroupUser  = new KeyGroup(grpUserKey, 5,3,50,40);
+      keyGroupStand = new KeyGroup(grpStandKey,5,5,50,40);
+
+      keyGroupUser->RegisterButtonClickEvent(onKeyClick);
+      keyGroupUser->RegisterButtonMouseUpEvent(onButtonSelect);
+
+      
+      keyGroupStand->RegisterButtonClickEvent(onKeyClick);
+      
+      if(!RemoteControllerMgr::get()->openDevice(6))
       {
-         
+
           updateIdraStatus(false);
           disableWork(true);
           //Application->Terminate();
       }
       else
       {
-          rcmgr.load();
+          RemoteControllerMgr::get()->load();
           updateDeviceList();
-          loadKeys();
           updateIdraStatus(true);
           disableWork(false);
       }
 
 
 }
-//---------------------------------------------------------------------------
-
-
-void __fastcall TForm1::mmIdraClick(TObject *Sender)
+void __fastcall TForm1::learnKey(TObject *Sender)
 {
-    frmIdraSet->ShowModal();
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::mmAddKeyClick(TObject *Sender)
-{
-      Form2->ShowModal();
-}
-//---------------------------------------------------------------------------
-void __fastcall TForm1::btnLearnClick(TObject *Sender)
-{
-     if( bLearn)
+     if(bLearn)
      {
          btnLearn->Caption = "开始学习";
-
          updateKeyStatus();
      }
      else
      {
          btnLearn->Caption = "停止学习";
-         enableAllKey();
+         enableAllKey(true);
+
      }
      bLearn = !bLearn;
+
 }
+
 //---------------------------------------------------------------------------
 void __fastcall TForm1::onKeyClick(TObject *Sender)
 {
@@ -162,7 +158,7 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
           btn->Enabled = false;
 
 
-          if(rcmgr.learnKey(btn->Caption, 5))
+          if(RemoteControllerMgr::get()->learnKey(btn->Caption, 5))
           {
              ShowMessage("学习成功");
           }
@@ -174,49 +170,25 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
       }
       else
       {
-          if(!rcmgr.sendKey(btn->Caption))
+          if(!RemoteControllerMgr::get()->sendKey(btn->Caption))
           {
               ShowMessage("发送失败");
           }
       }
 }
-//---------------------------------------------------------------------------
-TButton* __fastcall TForm1::addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h)
+
+void __fastcall TForm1::addDevice(TObject *Sender)
 {
-
-      
-      TButton* btn = new TButton(this);
-
-      btn->Parent = parent;
-      
-      btn->Width  = w;
-      btn->Height = h;
-
-
-      btn->Left =  left;
-      btn->Top =   top;
-      btn->Caption = name;
-
-      btn->OnClick =  onKeyClick;
-      btn->Show();
-
-      buttonList[name] = btn;
-
-      return btn;
-}
-
-void __fastcall TForm1::btnNewClick(TObject *Sender)
-{
-     frmRemoteDev->ShowModal();
+      frmRemoteDev->ShowModal();
      if(frmRemoteDev->isOk)
      {
-         if(rcmgr.existDevice(frmRemoteDev->devName))
+         if(RemoteControllerMgr::get()->existDevice(frmRemoteDev->devName))
          {
             ShowMessage("该遥控器已经存在了");
          }
          else
          {
-            if(rcmgr.createNewCtrlDevice(frmRemoteDev->devName))
+            if(RemoteControllerMgr::get()->createNewCtrlDevice(frmRemoteDev->devName))
             {
                 cbbDevice->Text = frmRemoteDev->devName;
                 ShowMessage("遥控器新建成功");
@@ -231,12 +203,23 @@ void __fastcall TForm1::btnNewClick(TObject *Sender)
      updateDeviceList();
 
 }
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::btnDelClick(TObject *Sender)
+void __fastcall TForm1::delDevice(TObject *Sender)
 {
-   //
-    if(rcmgr.deleteCtrlDevice(cbbDevice->Text))
+
+    switch (Application->MessageBox("确认删除当前遥控器", "提示", MB_OKCANCEL 
+        + MB_ICONQUESTION)) {
+        case IDOK: {
+
+            break;
+        }
+        case IDCANCEL: {
+        
+            return;
+            break;
+        }
+    }
+
+    if(RemoteControllerMgr::get()->deleteCtrlDevice(cbbDevice->Text))
     {
         ShowMessage("删除成功");
     }
@@ -244,103 +227,66 @@ void __fastcall TForm1::btnDelClick(TObject *Sender)
 
     updateDeviceList();
 }
+void __fastcall TForm1::btnDelClick(TObject *Sender)
+{
+     delDevice(Sender);
+}
 //---------------------------------------------------------------------------
-
-void __fastcall TForm1::btnModifyClick(TObject *Sender)
+void __fastcall TForm1::modifyDevice(TObject *Sender)
 {
      frmRemoteDev->ShowModal();
      if(frmRemoteDev->isOk)
      {
-         if(rcmgr.existDevice(cbbDevice->Text))
+         if(RemoteControllerMgr::get()->existDevice(cbbDevice->Text))
          {
-            rcmgr.updateDeviceName(cbbDevice->Text,frmRemoteDev->devName);
+            RemoteControllerMgr::get()->updateDeviceName(cbbDevice->Text,frmRemoteDev->devName);
          }
 
 
      }
      updateDeviceList();
 }
+void __fastcall TForm1::btnModifyClick(TObject *Sender)
+{
+      modifyDevice(Sender);
+}
 
 void __fastcall TForm1::enableAllKey(bool en)
 {
-
-     for(size_t i = 0; i < STAND_KEY_NUM; i++)
-    {
-
-       // buttonList[gStandKeyList[i]]->Enabled = en;
-
-    }
-    TButtonMap::iterator it;
-    for(it=buttonList.begin();it!=buttonList.end();++it)
-    {
-         it->second->Enabled = en;
-    }
+    keyGroupStand->enableAll(en);
+    keyGroupUser->enableAll(en);
 }
 void __fastcall TForm1::updateKeyStatus()
 {
     TKeyNameList keyList;
-    rcmgr.getCurrentCtrlDevice()->listKey(keyList);
-
-    for(size_t i = 0; i < STAND_KEY_NUM; i++)
-    {
-        bool find = false;
-        for(size_t j = 0; j < keyList.size(); j++)
-        {
-            AnsiString key1 =  gStandKeyList[i] ;
-            AnsiString key2 =  keyList.at(j);
-            if( key1 == key2)
-            {
-
-                 find = true;
-                 break;
-            }
-        }
-
-        buttonList[gStandKeyList[i]]->Enabled = find;
-
-    }
+    RemoteControllerMgr::get()->listKey(keyList);
+    keyGroupStand->enableButtonByNameList(keyList);
     keyList.clear();
-    rcmgr.getCurrentCtrlDevice()->listKey(keyList,TYPE_USER);      //获取自定义按键
-
+    RemoteControllerMgr::get()->listKey(keyList,TYPE_USER);      //获取自定义按键
+    keyGroupUser->enableButtonByNameList(keyList);
 
 }
 //---------------------------------------------------------------------------
+bool __fastcall TForm1::changeDevice(AnsiString name)
+{
+     if( !RemoteControllerMgr::get()->setCurrentCtrlDevice(name))
+     {
+         return false;
+     }
 
+     loadKeys();
+     updateCurrDeviceName();
+     updateKeyStatus();
+
+     return true;
+}
 
 void __fastcall TForm1::cbbDeviceChange(TObject *Sender)
 {
-    //
-     if( rcmgr.setCurrentCtrlDevice(cbbDevice->Text))
-     {
-
-         //ShowMessage("切换成功");
-
-         TKeyNameList keyList;
-         rcmgr.getCurrentCtrlDevice()->listKey(keyList);
-         cbbDevice->Text = rcmgr.getCurrentCtrlDevice()->m_name;
-         for(size_t i = 0; i < keyList.size();i++)
-         {
-             mmoInfo->Lines->Add(keyList.at(i));
-         }
-
-
-     }
-     else
-     {
-         ShowMessage("切换失败");
-     }
-
-     updateDeviceStatus();
-     updateKeyStatus();
-       
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::btnAddUserKeyMouseUp(TObject *Sender,
-      TMouseButton Button, TShiftState Shift, int X, int Y)
-{
-       //
-      
+    if(!changeDevice(cbbDevice->Text))
+    {
+        ShowMessage("切换失败");
+    }
 }
 //---------------------------------------------------------------------------
 
@@ -349,6 +295,7 @@ void __fastcall TForm1::grpUserKeyMouseUp(TObject *Sender,
 {
        if(Button == mbRight)
        {
+           mmKeyAdd->Enabled = true;
            TPoint pt(X,Y);
            TPoint pt2 = grpUserKey->ClientToScreen(pt);
            pm1->Popup(pt2.x,pt2.y);
@@ -356,7 +303,7 @@ void __fastcall TForm1::grpUserKeyMouseUp(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::N1Click(TObject *Sender)
+void __fastcall TForm1::mmKeyAddClick(TObject *Sender)
 {
      //
 
@@ -372,28 +319,19 @@ void __fastcall TForm1::N1Click(TObject *Sender)
           {
              //rcmgr.getCurrentCtrlDevice()->addKey()
              TKeyNameList keyList;
-             RemoteController* pDev = rcmgr.getCurrentCtrlDevice();
-             if(pDev == NULL)
+             AnsiString   deviceName;
+
+             if(RemoteControllerMgr::get()->getCurrentCtrlDeviceName(deviceName))
              {
                  ShowMessage("没有选择遥控器");
                  return;
              }
-             pDev->listKey(keyList,TYPE_USER);
-
-
-             size_t i = grpUserKey->ControlCount;
-             int left ,top;
-             int w = 60;
-             int h = 50;
-             int n = 5;
-             int left_align = (grpUserKey->Width  - (n*w) )/2 ;
-             int top_align  = (grpUserKey->Height - (3*h) )/2 ;
-
-
-
-             TButton* btn = addKeyButton(name, grpUserKey, left_align +(i%n)*w, top_align +(i/n)*h,w,h);
-             //btn->Enabled = false;
-
+             if(keyGroupUser->existButtonName(name))
+             {
+                 ShowMessage("改按键已经存在");
+                 return;
+             }
+             keyGroupUser->addKeyButton(name);
           }
      }
      else
@@ -401,6 +339,86 @@ void __fastcall TForm1::N1Click(TObject *Sender)
          
      }
      
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+
+       if(Button == mbRight)
+       {
+           TPoint pt(X,Y);
+
+           
+           TControl* pCtrl = (TControl*) Sender;
+           TPoint pt2 = pCtrl->ClientToScreen(pt);
+
+           //ShortString str = "TButton";
+
+           if(AnsiString(pCtrl->ClassName()) == AnsiString("TButton"))
+           {
+
+                pSelectButton =  (TButton*) Sender;
+                pm2->Popup(pt2.x,pt2.y);
+           }
+
+       }
+
+}
+void __fastcall TForm1::mmKeyDelClick(TObject *Sender)
+{
+
+   if(pSelectButton)
+   {
+        ShowMessage(pSelectButton->Caption);
+   }
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::mmKeyMClick(TObject *Sender)
+{
+    //
+     if(pSelectButton)
+   {
+        ShowMessage(pSelectButton->Caption);
+   }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::mmKeyAdd2Click(TObject *Sender)
+{
+     mmKeyAddClick(Sender);   
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::mmAddDevClick(TObject *Sender)
+{
+    addDevice(Sender);
+        
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btnNewClick(TObject *Sender)
+{
+     addDevice(Sender);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::mmDelDevClick(TObject *Sender)
+{
+     delDevice(Sender);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::mmMDevClick(TObject *Sender)
+{
+      modifyDevice(Sender);  
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btnLearnClick(TObject *Sender)
+{
+      learnKey(Sender);
 }
 //---------------------------------------------------------------------------
 

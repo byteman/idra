@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 187
-  Top = 4
+  Left = 185
+  Top = 30
   Width = 1025
   Height = 728
   Caption = #36965#25511#22120#27169#25311#22120'V1.0'
@@ -272,16 +272,31 @@ object Form1: TForm1
     Top = 80
     object mmIdra: TMenuItem
       Caption = #32418#22806#35774#22791#35774#32622
-      OnClick = mmIdraClick
     end
     object mmCtrl: TMenuItem
       Caption = #36965#25511#22120#31649#29702
       object mmAddDev: TMenuItem
         Caption = #28155#21152#36965#25511#22120
+        ShortCut = 16462
+        OnClick = mmAddDevClick
       end
-      object mmAddKey: TMenuItem
-        Caption = #25353#38190#31649#29702
-        OnClick = mmAddKeyClick
+      object mmDelDev: TMenuItem
+        Caption = #21024#38500#36965#25511#22120
+        ShortCut = 16452
+        OnClick = mmDelDevClick
+      end
+      object mmMDev: TMenuItem
+        Caption = #20462#25913#36965#25511#22120
+        ShortCut = 16461
+        OnClick = mmMDevClick
+      end
+      object mmLearnKey: TMenuItem
+        Caption = #23398#20064#25353#38190
+        ShortCut = 16460
+      end
+      object N1: TMenuItem
+        Caption = #28155#21152#33258#23450#20041#25353#38190
+        ShortCut = 16459
       end
     end
     object mmUserCase: TMenuItem
@@ -294,9 +309,25 @@ object Form1: TForm1
   object pm1: TPopupMenu
     Left = 936
     Top = 80
-    object N1: TMenuItem
+    object mmKeyAdd: TMenuItem
       Caption = #28155#21152#33258#23450#38190
-      OnClick = N1Click
+      OnClick = mmKeyAddClick
+    end
+  end
+  object pm2: TPopupMenu
+    Left = 832
+    Top = 80
+    object mmKeyAdd2: TMenuItem
+      Caption = #28155#21152#25353#38190
+      OnClick = mmKeyAdd2Click
+    end
+    object mmKeyDel: TMenuItem
+      Caption = #21024#38500#25353#38190
+      OnClick = mmKeyDelClick
+    end
+    object mmKeyM: TMenuItem
+      Caption = #20462#25913#25353#38190
+      OnClick = mmKeyMClick
     end
   end
 end

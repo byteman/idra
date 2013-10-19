@@ -43,7 +43,7 @@ __published:	// IDE-managed Components
         TRzStatusPane *rzstspn2;
         TRzStatusPane *rzstspn3;
         TPopupMenu *pm1;
-        TMenuItem *N1;
+        TMenuItem *mmKeyAdd;
         TMenuItem *mmAddUC;
         TBitBtn *btnRecord;
         TLabel *lbl1;
@@ -51,33 +51,49 @@ __published:	// IDE-managed Components
         TBitBtn *btnNew;
         TBitBtn *btnDel;
         TBitBtn *btnModify;
-        TMenuItem *mmAddKey;
+        TMenuItem *mmDelDev;
         TBitBtn *btnLearn;
         TShape *shpIdra;
-    void __fastcall FormCreate(TObject *Sender);
-        void __fastcall mmIdraClick(TObject *Sender);
-        void __fastcall mmAddKeyClick(TObject *Sender);
-        void __fastcall btnLearnClick(TObject *Sender);
+        TPopupMenu *pm2;
+        TMenuItem *mmKeyDel;
+        TMenuItem *mmKeyM;
+        TMenuItem *mmKeyAdd2;
+        TMenuItem *mmMDev;
+        TMenuItem *mmLearnKey;
+        TMenuItem *N1;
+        void __fastcall FormCreate(TObject *Sender);
         void __fastcall onKeyClick(TObject *Sender);
-        void __fastcall btnNewClick(TObject *Sender);
+        void __fastcall onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
         void __fastcall btnDelClick(TObject *Sender);
-    void __fastcall btnModifyClick(TObject *Sender);
+        void __fastcall btnModifyClick(TObject *Sender);
         void __fastcall cbbDeviceChange(TObject *Sender);
-        void __fastcall btnAddUserKeyMouseUp(TObject *Sender,
-          TMouseButton Button, TShiftState Shift, int X, int Y);
         void __fastcall grpUserKeyMouseUp(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
-        void __fastcall N1Click(TObject *Sender);
+        void __fastcall mmKeyAddClick(TObject *Sender);
+        void __fastcall mmKeyDelClick(TObject *Sender);
+        void __fastcall mmKeyMClick(TObject *Sender);
+        void __fastcall mmKeyAdd2Click(TObject *Sender);
+        void __fastcall mmAddDevClick(TObject *Sender);
+        void __fastcall btnNewClick(TObject *Sender);
+        void __fastcall mmDelDevClick(TObject *Sender);
+        void __fastcall mmMDevClick(TObject *Sender);
+        void __fastcall btnLearnClick(TObject *Sender);
+        //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations
     TButton* __fastcall addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h);
     void __fastcall loadKeys(void);
+    bool __fastcall changeDevice(AnsiString name);
     void __fastcall updateDeviceList();
-    void __fastcall updateDeviceStatus();
+    void __fastcall updateCurrDeviceName();
     void __fastcall updateIdraStatus(bool on);
     void __fastcall disableWork(bool yes);
     void __fastcall updateKeyStatus();
     void __fastcall enableAllKey(bool en=true);
+    void __fastcall addDevice(TObject *Sender);
+    void __fastcall delDevice(TObject *Sender);
+    void __fastcall modifyDevice(TObject *Sender);
+    void __fastcall learnKey(TObject *Sender);
 
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

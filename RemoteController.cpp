@@ -26,6 +26,8 @@ RemoteController::RemoteController(RemoteControlInfo* pInfo):
     m_info = pInfo;
     m_keyMap.clear();
 
+  
+
 }
 bool RemoteController::load()
 {
@@ -43,7 +45,7 @@ bool RemoteController::load()
              TKey key;
              AnsiString name    =  qry.fieldValue("key");
              key.codec          =  qry.fieldValue("codec");
-             key.keyType        =  qry.getIntField("type");
+             key.keyType        =  (TKeyType)qry.getIntField("type");
              m_keyMap[name]     =  key;
              qry.nextRow();
         }
@@ -103,7 +105,7 @@ bool RemoteController::updateKey(AnsiString keyName, AnsiString keyCodec)
          int ret = m_db.execDML(sql);
          if(ret > 0)
          {
-            m_keyMap[keyName] = keyCodec;
+            m_keyMap[keyName].codec = keyCodec; //更新已有按键的编码
             return true;
          }
     }
@@ -118,14 +120,15 @@ bool RemoteController::updateKey(AnsiString keyName, AnsiString keyCodec)
 bool RemoteController::addKey(AnsiString keyName, AnsiString keyCodec,TKeyType type)
 {
     CppSQLite3Buffer sql;
-    sql.format("insert or rollback into tbl_ctrl_%s (key,codec,type) values(%Q,%Q,%d)",m_name, keyName, keyCodec,type);
+    sql.format("insert or rollback into tbl_ctrl_%s (key,codec,type) values(%Q,%Q,%d)",m_name, keyName, keyCodec,(int)type);
     if(!m_load) return false;
     try
     {
          int ret = m_db.execDML(sql);
          if(ret > 0)
          {
-            m_keyMap[keyName] = keyCodec;
+            TKey key(keyCodec,type);
+            m_keyMap[keyName] = key;
             return true;
          }
     }
@@ -171,6 +174,7 @@ bool RemoteController::listKey(TKeyNameList& keylist,TKeyType type)
 
 
 }
+
 bool RemoteController::isLoad()
 {
     return m_load;

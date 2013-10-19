@@ -14,6 +14,7 @@ class RemoteControllerMgr
 {
 public:
       RemoteControllerMgr();
+      static RemoteControllerMgr* get();
       bool load();
       bool unLoad();
       bool openDevice(int port = 1);
@@ -31,6 +32,10 @@ public:
       
       bool learnKey(AnsiString keyName, int timeS);
       bool sendKey(AnsiString keyName);
+      bool isStandKey(AnsiString keyName);
+      size_t RemoteControllerMgr::getStandKeyList(TKeyNameList& list);
+      bool listKey(TKeyNameList& keylist,TKeyType type=TYPE_STAND);
+      bool getCurrentCtrlDeviceName(AnsiString &name);
 private:
       void deleteFromDeviceList(AnsiString &name);
       CppSQLite3DB m_db;
@@ -39,6 +44,7 @@ private:
       TDeviceMap   m_devices;
       int          m_port;
       bool m_idra_ok;
+      TDeviceNameList m_standKey_list;
 
 };
 #endif
