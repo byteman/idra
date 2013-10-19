@@ -31,6 +31,8 @@ public:
       TDeviceNameList  m_device_list;
       
       bool learnKey(AnsiString keyName, int timeS);
+      bool deleteKey(AnsiString keyName);
+      bool modifyKey(AnsiString keyName,AnsiString newKeyName);
       bool sendKey(AnsiString keyName);
       bool isStandKey(AnsiString keyName);
       size_t RemoteControllerMgr::getStandKeyList(TKeyNameList& list);
@@ -38,6 +40,9 @@ public:
       bool getCurrentCtrlDeviceName(AnsiString &name);
 private:
       void deleteFromDeviceList(AnsiString &name);
+      void handleIdraError(IDRA_ERR err);
+      RemoteController* addDevice();
+      bool checkDB(CppSQLite3DB& db);
       CppSQLite3DB m_db;
       IDraDevice   m_idra;
       RemoteController *m_curDev;

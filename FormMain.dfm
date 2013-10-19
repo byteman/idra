@@ -95,6 +95,7 @@ object Form1: TForm1
         Width = 395
         Height = 227
         Align = alClient
+        ScrollBars = ssVertical
         TabOrder = 0
       end
     end
@@ -303,6 +304,14 @@ object Form1: TForm1
         Caption = #28155#21152#29992#20363
       end
     end
+    object mmLog: TMenuItem
+      Caption = #26085#24535#31649#29702
+      object mmLogClear: TMenuItem
+        Caption = #28165#31354#26085#24535
+        ShortCut = 16466
+        OnClick = mmLogClearClick
+      end
+    end
   end
   object pm1: TPopupMenu
     Left = 936
@@ -310,6 +319,9 @@ object Form1: TForm1
     object mmKeyAdd: TMenuItem
       Caption = #28155#21152#33258#23450#38190
       OnClick = mmKeyAddClick
+    end
+    object mmClearAll: TMenuItem
+      Caption = #28165#38500#20840#37096#25353#38190
     end
   end
   object pm2: TPopupMenu

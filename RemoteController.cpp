@@ -179,3 +179,39 @@ bool RemoteController::isLoad()
 {
     return m_load;
 }
+bool RemoteController::deleteFromMap(AnsiString keyName)
+{
+
+    TDeviceKeyMap::iterator it = m_keyMap.find(keyName);
+
+    if(it != m_keyMap.end())
+        m_keyMap.erase(it);
+
+    return true;
+}
+bool RemoteController::deleteKey(AnsiString keyName)
+{
+    if(!m_load) return false;
+    
+
+    CppSQLite3Buffer sql;
+    sql.format("delete from tbl_ctrl_%s where key=%Q",m_name, keyName);
+    
+
+    try
+    {
+         int ret = m_db.execDML(sql);
+         deleteFromMap(keyName);
+         return true;
+    }
+    catch(CppSQLite3Exception& e)
+    {
+
+    }
+    return false;
+
+}
+bool RemoteController::modifyKey(AnsiString keyName,AnsiString newKeyName)
+{
+
+}

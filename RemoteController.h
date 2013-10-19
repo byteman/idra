@@ -71,11 +71,14 @@ public:
      bool getKeyCodec(AnsiString keyName,AnsiString &codec);
      /*列出该遥控器所有的按键名称*/
      bool listKey(TKeyNameList& keylist,TKeyType type=TYPE_STAND);
-   
+
+     bool deleteKey(AnsiString keyName);
+     bool modifyKey(AnsiString keyName,AnsiString newKeyName);
      AnsiString  m_name;
 
 
 private:
+     bool deleteFromMap(AnsiString keyName);
      TDeviceKeyMap      m_keyMap;
      RemoteControlInfo *m_info;
      CppSQLite3DB       m_db;

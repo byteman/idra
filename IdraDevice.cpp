@@ -5,6 +5,7 @@
 
 #include "IdraDevice.h"
 #include "PCOMM.h"
+#include "bylogger.h"
 //---------------------------------------------------------------------------
 
 #pragma package(smart_init)
@@ -75,12 +76,16 @@ IDRA_ERR IDraDevice::learnKey(unsigned char codec[128],int timeoutS)
          if(size == 136) //学习到了数据
          {
               memcpy(codec, cmd+8, 128);
+              
               return IDRA_ERR_OK;
          }
          else if(size == 8)
          {
              if(cmd[3] == CMD_LEARN_NACK)
-                return IDRA_INVALID;
+             {
+                   return IDRA_INVALID;
+             }
+
               
          }
 

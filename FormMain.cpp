@@ -11,6 +11,7 @@
 #include "RemoteControllerMgr.h"
 #include "FormRemoteController.h"
 #include "KeyGroup.h"
+#include "bylogger.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -125,14 +126,18 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
       
       if(!RemoteControllerMgr::get()->openDevice(6))
       {
-
+          bylog("红外发射模块通讯异常，请插入");
           updateIdraStatus(false);
           disableWork(true);
           //Application->Terminate();
       }
       else
       {
-          RemoteControllerMgr::get()->load();
+          bylog("红外发射模块通讯正常");
+          if(RemoteControllerMgr::get()->load())
+          {
+              bylog("加载遥控器数据成功");
+          }
           updateCurrDevice();
           updateIdraStatus(true);
           disableWork(false);
@@ -147,11 +152,13 @@ void __fastcall TForm1::learnKey(TObject *Sender)
      if(bLearn)
      {
          btnLearn->Caption = "开始学习";
+         bylog("退出工作模式,进入学习模式");
          updateKeyStatus();
      }
      else
      {
          btnLearn->Caption = "停止学习";
+         bylog("退出学习模式,进入工作模式");
          enableAllKey(true);
 
      }
@@ -169,14 +176,14 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
 
           btn->Enabled = false;
 
-
+          bylog("正在学习【%s】键,请按遥控器....",btn->Caption);
           if(RemoteControllerMgr::get()->learnKey(btn->Caption, 5))
           {
-             ShowMessage("学习成功");
+             bylog("学习【%s】键:成功",btn->Caption);
           }
           else
           {
-             ShowMessage("学习失败");
+             bylog("学习【%s】键:失败",btn->Caption);
           }
           btn->Enabled = true;
       }
@@ -184,7 +191,11 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
       {
           if(!RemoteControllerMgr::get()->sendKey(btn->Caption))
           {
-              ShowMessage("发送失败");
+              bylog("【%s】键:发送失败,请检查红外模块处于学习状态",btn->Caption);
+          }
+          else
+          {
+              bylog("【%s】键:发送成功",btn->Caption);
           }
       }
 }
@@ -198,7 +209,7 @@ void __fastcall TForm1::addDevice(TObject *Sender)
      {
          if(RemoteControllerMgr::get()->existDevice(newDeviceName))
          {
-            ShowMessage("该遥控器已经存在了");
+            bylog("该遥控器已经存在了");
          }
          else
          {
@@ -207,13 +218,13 @@ void __fastcall TForm1::addDevice(TObject *Sender)
                 
                 if(!changeDevice(newDeviceName))
                 {
-                    ShowMessage("切换失败");
+                    bylog("切换失败");
                 }
                 //ShowMessage("遥控器新建成功");
             }
             else
             {
-                ShowMessage("遥控器新建失败");
+                bylog("遥控器新建失败");
             }
          }
 
@@ -241,7 +252,7 @@ void __fastcall TForm1::delDevice(TObject *Sender)
     {
         //ShowMessage("删除成功");
     }
-    else  ShowMessage("删除失败");
+    else  bylog("删除失败");
 
     if(cbbDevice->Items->Count > 0)
     {
@@ -310,7 +321,7 @@ void __fastcall TForm1::cbbDeviceChange(TObject *Sender)
 {
     if(!changeDevice(cbbDevice->Text))
     {
-        ShowMessage("切换失败");
+        bylog("切换失败");
     }
 }
 //---------------------------------------------------------------------------
@@ -338,7 +349,7 @@ void __fastcall TForm1::mmKeyAddClick(TObject *Sender)
           AnsiString name = Form2->keyName;
           if(name.Length() == 0)
           {
-              ShowMessage("请输入按键名称");
+              bylog("请输入按键名称");
           }
           else
           {
@@ -348,12 +359,12 @@ void __fastcall TForm1::mmKeyAddClick(TObject *Sender)
 
              if(!RemoteControllerMgr::get()->getCurrentCtrlDeviceName(deviceName))
              {
-                 ShowMessage("没有选择遥控器");
+                 bylog("没有选择遥控器");
                  return;
              }
              if(keyGroupUser->existButtonName(name))
              {
-                 ShowMessage("改按键已经存在");
+                 bylog("改按键已经存在");
                  return;
              }
              keyGroupUser->addKeyButton(name);
@@ -394,7 +405,9 @@ void __fastcall TForm1::mmKeyDelClick(TObject *Sender)
 
    if(pSelectButton)
    {
-        ShowMessage(pSelectButton->Caption);
+        //ShowMessage(pSelectButton->Caption);
+        RemoteControllerMgr::get()->deleteKey(pSelectButton->Caption);
+        loadKeys();
    }
 
 }
@@ -446,5 +459,15 @@ void __fastcall TForm1::btnLearnClick(TObject *Sender)
       learnKey(Sender);
 }
 //---------------------------------------------------------------------------
+void GUI_OUTPUT(const char* logMsg)
+{
+    AnsiString text = Now().FormatString("hh:mm:ss  ") + logMsg; 
+    Form1->mmoInfo->Lines->Add(text);
+}
 
+void __fastcall TForm1::mmLogClearClick(TObject *Sender)
+{
+     mmoInfo->Clear();   
+}
+//---------------------------------------------------------------------------
 

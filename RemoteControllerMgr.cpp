@@ -4,7 +4,7 @@
 #pragma hdrstop
 
 #include "RemoteControllerMgr.h"
-
+#include "bylogger.h"
 //---------------------------------------------------------------------------
 
 #pragma package(smart_init)
@@ -64,12 +64,51 @@ bool RemoteControllerMgr::unLoad()
      }
      m_devices.clear();
 }
+bool RemoteControllerMgr::checkDB(CppSQLite3DB& db)
+{
+   //
+      bool exist = false;
+      if(db.tableExists("tbl_tv_devices"))
+      {
+           return true;
+      }
+
+      try
+      {
+           #if 1
+           const char*    sql     = "CREATE TABLE tbl_tv_devices (                \
+                  id       INTEGER PRIMARY KEY AUTOINCREMENT    \
+                                   NOT NULL,          \
+                  name     TEXT    NOT NULL,           \
+                  vendor   TEXT,                   \
+                  version  TEXT,                    \
+                  city     TEXT,                    \
+                  hardVer  TEXT,                    \
+                  platform TEXT,                   \
+                  property TEXT,                    \
+                  cpu      TEXT ); ";
+
+          #endif
+              
+          db.execDML(sql);
+          exist = true;
+      }
+      catch(CppSQLite3Exception& e)
+      {
+
+      }
+      return exist;
+}
 bool RemoteControllerMgr::load()
 {
     try
     {
           m_db.open("idra.db3");
-
+          if(!checkDB(m_db))
+          {
+              bylog("数据库创建tbl_tv_devices 失败");
+              return false;
+          }
           CppSQLite3Query qry =  m_db.execQuery("select * from tbl_tv_devices ");
 
           unLoad();
@@ -104,7 +143,7 @@ bool RemoteControllerMgr::load()
     }
     catch(CppSQLite3Exception& e)
     {
-
+         bylog("数据库加载失败..");
     }
 
     return false;
@@ -181,7 +220,7 @@ RemoteController* RemoteControllerMgr::createNewCtrlDevice(AnsiString& devName)
      m_info->m_name =  devName;
      
      pDev = new RemoteController(m_info);
-
+     pDev->load();
      m_devices.push_back(pDev);
 ////////////////////////////////////////////////////////////////     
      return pDev;
@@ -311,15 +350,46 @@ RemoteController* RemoteControllerMgr::getCurrentCtrlDevice()
 {
      return  m_curDev;
 }
+void RemoteControllerMgr::handleIdraError(IDRA_ERR err)
+{
+     if(err == IDRA_BADPORT)
+     {
+         bylog("串口打开失败");
+     }
+     else if(err == IDRA_TIMEOUT)
+     {
+         bylog("红外设备通讯超时");
+     }
+     else if(err == IDRA_INVALID)
+     {
+         bylog("红外设备无效的命令");
+     }
+     else
+     {
+         bylog("未知命令");
+     }
+}
 //为当前遥控器学习按键编码
 bool RemoteControllerMgr::learnKey(AnsiString keyName,int timeS)
 {
-    if(!m_idra_ok) return false;
-    if(!m_curDev)  return false;
-    
-    char codec[128] = {0,};
+    if(!m_idra_ok)
+    {
+       bylog("红外设备没有打开");
+       return false;
+    }
 
-    if(m_idra.learnKey((unsigned char*)codec, timeS) != IDRA_ERR_OK) return false;
+    if(!m_curDev)
+    {
+        bylog("没有选中遥控器");
+        return false;
+    }
+    char codec[128] = {0,};
+    IDRA_ERR err = m_idra.learnKey((unsigned char*)codec, timeS) ;
+    if( err != IDRA_ERR_OK)
+    {
+         handleIdraError(err);
+         return false;
+    }
 
     if(m_curDev->existKeyName(keyName))   //修改按键编码
     {
@@ -364,4 +434,20 @@ bool RemoteControllerMgr::isStandKey(AnsiString keyName)
           return true;
    }
    return false;
+}
+//删除按键
+bool RemoteControllerMgr::deleteKey(AnsiString keyName)
+{
+   if(!m_curDev->existKeyName(keyName))   //修改按键编码
+    {
+        bylog("【%s】键不存在",keyName);
+        return false;
+        //return m_curDev->updateKey(keyName, codec);
+    }
+    return m_curDev->deleteKey(keyName);
+}
+//修改按键的名称
+bool RemoteControllerMgr::modifyKey(AnsiString keyName,AnsiString newKeyName)
+{
+
 }

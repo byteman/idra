@@ -61,6 +61,9 @@ __published:	// IDE-managed Components
         TMenuItem *mmMDev;
         TMenuItem *mmLearnKey;
         TMenuItem *N1;
+        TMenuItem *mmLog;
+        TMenuItem *mmLogClear;
+        TMenuItem *mmClearAll;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall onKeyClick(TObject *Sender);
         void __fastcall onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
@@ -78,6 +81,7 @@ __published:	// IDE-managed Components
         void __fastcall mmDelDevClick(TObject *Sender);
         void __fastcall mmMDevClick(TObject *Sender);
         void __fastcall btnLearnClick(TObject *Sender);
+        void __fastcall mmLogClearClick(TObject *Sender);
         //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations
