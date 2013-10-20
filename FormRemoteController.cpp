@@ -32,5 +32,6 @@ void __fastcall TfrmRemoteDev::btnOkClick(TObject *Sender)
 void __fastcall TfrmRemoteDev::btnCancelClick(TObject *Sender)
 {
         isOk = false;
+        this->Close();
 }
 //---------------------------------------------------------------------------

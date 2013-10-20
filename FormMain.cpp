@@ -12,7 +12,8 @@
 #include "FormRemoteController.h"
 #include "KeyGroup.h"
 #include "bylogger.h"
-
+#include "SysConfig.h"
+#include "FormUcSave.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "YbCommDevice"
@@ -123,8 +124,11 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
       
       keyGroupStand->RegisterButtonClickEvent(onKeyClick);
-      
-      if(!RemoteControllerMgr::get()->openDevice(6))
+
+      SystemConfig config;
+
+      int port = RemoteControllerMgr::get()->openDevice(config.port);
+      if(port == -1)
       {
           bylog("红外发射模块通讯异常，请插入");
           updateIdraStatus(false);
@@ -133,13 +137,16 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
       }
       else
       {
-          bylog("红外发射模块通讯正常");
+          bylog("红外发射模块通讯正常,串口[%d]",port);
+          config.port = port;
+          config.save();
           if(RemoteControllerMgr::get()->load())
           {
               bylog("加载遥控器数据成功");
           }
           updateCurrDevice();
           updateIdraStatus(true);
+          updateUserCaseList();
           disableWork(false);
       }
 
@@ -147,16 +154,38 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
 
 }
+void __fastcall TForm1::updateUserCaseList()
+{
+     //
+     TKeyNameList list;
+
+     size_t n = RemoteControllerMgr::get()->getUCList(list);
+
+     lstUserCase->Clear();
+
+     for(size_t i = 0; i < n; i++)
+     {
+         lstUserCase->AddItem(list.at(i),this);
+     }
+
+}
 void __fastcall TForm1::learnKey(TObject *Sender)
 {
      if(bLearn)
      {
+
          btnLearn->Caption = "开始学习";
          bylog("退出工作模式,进入学习模式");
          updateKeyStatus();
      }
      else
      {
+         AnsiString name;
+         if(!RemoteControllerMgr::get()->getCurrentCtrlDeviceName(name))
+         {
+             bylog("当前没有选中遥控器，不能学习!!");
+             return;
+         }
          btnLearn->Caption = "停止学习";
          bylog("退出学习模式,进入工作模式");
          enableAllKey(true);
@@ -197,6 +226,7 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
           {
               bylog("【%s】键:发送成功",btn->Caption);
           }
+          lstStatus->AddItem(btn->Caption,Sender);
       }
 }
 
@@ -254,9 +284,14 @@ void __fastcall TForm1::delDevice(TObject *Sender)
     }
     else  bylog("删除失败");
 
-    if(cbbDevice->Items->Count > 0)
+    AnsiString name;
+    if(!RemoteControllerMgr::get()->setCurrentCtrlDevice(0,name))
     {
-        changeDevice(cbbDevice->Items->Strings[0]);
+         updateCurrDevice();
+    }
+    else
+    {
+         changeDevice(name);
     }
 
 }
@@ -267,6 +302,13 @@ void __fastcall TForm1::btnDelClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::modifyDevice(TObject *Sender)
 {
+     AnsiString name;
+
+     if(!RemoteControllerMgr::get()->getCurrentCtrlDeviceName(name))
+     {
+         bylog("当前没有选中遥控器，无法修改");
+         return;
+     }
      frmRemoteDev->ShowModal();
      if(frmRemoteDev->isOk)
      {
@@ -468,6 +510,67 @@ void GUI_OUTPUT(const char* logMsg)
 void __fastcall TForm1::mmLogClearClick(TObject *Sender)
 {
      mmoInfo->Clear();   
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btnRecordClick(TObject *Sender)
+{
+    //
+    static bool bRecord = false;
+    if(bRecord)
+    {
+
+        OKBottomDlg->ShowModal();
+        if(OKBottomDlg->save)
+        {
+            AnsiString ucName = OKBottomDlg->lbledtUCname->Text;
+            if(ucName!="")
+            {
+                if(RemoteControllerMgr::get()->SaveRecordToUserCase(ucName))
+                {
+                    bylog("用例[%s]保存成功",ucName);
+                }
+                else  bylog("用例[%s]保存失败",ucName);
+
+
+                }
+            else  bylog("用例名不能为空");
+
+        }
+        RemoteControllerMgr::get()->StopRecord();
+        btnRecord->Caption = "开始录制";
+
+    }
+    else
+    {
+        btnRecord->Caption = "停止录制";
+        lstStatus->Clear();
+        RemoteControllerMgr::get()->StartRecord();
+
+    }
+    bRecord = !bRecord;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::updateUcKeyList(AnsiString &ucName)
+{
+     TStringList* list = new TStringList;
+     RemoteControllerMgr::get()->getUCKeyList(ucName,list);
+     lstStatus->Items = list;
+     delete list;
+}
+void __fastcall TForm1::lstUserCaseClick(TObject *Sender)
+{
+    //
+     int index = lstUserCase->ItemIndex;
+
+     if(index != -1)
+     {
+          AnsiString ucName = lstUserCase->Items->Strings[index];
+          updateUcKeyList(ucName);
+          
+     }
+
 }
 //---------------------------------------------------------------------------
 

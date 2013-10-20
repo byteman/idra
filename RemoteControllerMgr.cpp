@@ -31,26 +31,27 @@ RemoteControllerMgr::RemoteControllerMgr():
 {
         for(int i = 0; i < STAND_KEY_NUM; i++)
         m_standKey_list.push_back(gStandKeyList[i]);
+        m_keyList = new TStringList();
 }
-bool RemoteControllerMgr::openDevice(int port)
+int RemoteControllerMgr::openDevice(int port)
 {
      m_idra_ok = false;
      if(!m_idra.openDev(port, 9600) == IDRA_ERR_OK)
      {
          for(int i = 1; i < 10; i++)
          {
-              if(m_idra.openDev(port, 9600) == IDRA_ERR_OK)
+              if(m_idra.openDev(i, 9600) == IDRA_ERR_OK)
               {
                   m_idra_ok = true;
-                  m_port    = port;
+                  m_port    = i;
                   break;
               }
          }
-         return m_idra_ok;
+         return (m_idra_ok)?m_port:-1;
      }
      m_idra_ok = true;
      m_port = port;
-     return true;
+     return m_port;
 }
 bool RemoteControllerMgr::unLoad()
 {
@@ -64,15 +65,9 @@ bool RemoteControllerMgr::unLoad()
      }
      m_devices.clear();
 }
-bool RemoteControllerMgr::checkDB(CppSQLite3DB& db)
+bool RemoteControllerMgr::createDeviceTable()
 {
-   //
       bool exist = false;
-      if(db.tableExists("tbl_tv_devices"))
-      {
-           return true;
-      }
-
       try
       {
            #if 1
@@ -89,8 +84,8 @@ bool RemoteControllerMgr::checkDB(CppSQLite3DB& db)
                   cpu      TEXT ); ";
 
           #endif
-              
-          db.execDML(sql);
+
+          m_db.execDML(sql);
           exist = true;
       }
       catch(CppSQLite3Exception& e)
@@ -98,6 +93,50 @@ bool RemoteControllerMgr::checkDB(CppSQLite3DB& db)
 
       }
       return exist;
+}
+bool RemoteControllerMgr::createUserCaseTable()
+{
+      bool exist = false;
+      try
+      {
+           #if 1
+           const char*    sql     = "CREATE TABLE tbl_usercase (  \
+                                      name    TEXT    NOT NULL,    \
+                                      keylist TEXT,                 \
+                                      keyMs   INTEGER                \
+                                  );                                  \
+                    ";
+
+          #endif
+              
+          m_db.execDML(sql);
+          exist = true;
+      }
+      catch(CppSQLite3Exception& e)
+      {
+      
+      }
+
+      
+      return exist;
+}
+bool RemoteControllerMgr::checkDB(CppSQLite3DB& db)
+{
+   //
+      bool exist = false;
+      if(!db.tableExists("tbl_tv_devices"))
+      {
+           if(!createDeviceTable())return false;
+      }
+
+
+      if(!db.tableExists("tbl_usercase"))
+      {
+           if(!createUserCaseTable()) return false;
+      }
+
+      return true;
+
 }
 bool RemoteControllerMgr::load()
 {
@@ -138,7 +177,8 @@ bool RemoteControllerMgr::load()
 
           qry.finalize();
 
-          return true;
+          return loadUserCase();
+          //return true;
 
     }
     catch(CppSQLite3Exception& e)
@@ -162,6 +202,19 @@ RemoteController* RemoteControllerMgr::existDevice( AnsiString& name)
 
      }
      return pDev;
+}
+bool RemoteControllerMgr::setCurrentCtrlDevice(int index,AnsiString &deviceName)
+{
+    if(!m_idra_ok) return false;
+    if( m_devices.size() == 0) return false;
+
+    if(m_devices.size() <= index) return false;
+    m_curDev = m_devices.at(index);
+
+    deviceName = m_curDev->m_name;
+    return true;
+    //setCurrentCtrlDevice(m_devices.at(index)->m_name);
+    
 }
 bool RemoteControllerMgr::setCurrentCtrlDevice(AnsiString deviceName)
 {
@@ -400,6 +453,92 @@ bool RemoteControllerMgr::learnKey(AnsiString keyName,int timeS)
 
     return m_curDev->addKey(keyName, codec, type); //新增加按键编码
 }
+void RemoteControllerMgr::recordKey(AnsiString keyName)
+{
+      if(m_keyList)
+      {
+         m_keyList->Add(keyName);
+      }
+}
+void RemoteControllerMgr::StartRecord()
+{
+     m_record = true;
+     m_keyList->Clear();
+}
+void RemoteControllerMgr::StopRecord()
+{
+     m_record = false;
+}
+
+bool RemoteControllerMgr::SaveRecordToUserCase(AnsiString ucName)
+{
+    bool exist = false;
+    try
+    {
+          CppSQLite3Buffer sql;
+
+          sql.format("select * from tbl_usercase where name=%Q",ucName);
+
+          CppSQLite3Query qry =  m_db.execQuery(sql);
+
+          if(!qry.eof())
+          {
+             bylog("用例已经存在");
+
+             exist = true;
+          }
+          qry.finalize();
+          if(exist) return false;
+
+
+          
+
+          sql.format("insert or rollback into tbl_usercase (name,keylist,keyMs) values(%Q,%Q,%d)",ucName,m_keyList->CommaText,1000);
+
+          m_db.execDML(sql);
+
+          return true;
+    }
+    catch(CppSQLite3Exception& e)
+    {
+
+
+    }
+    return false;
+}
+bool RemoteControllerMgr::loadUserCase()
+{
+    //m_userCaseMap
+    try
+    {
+          CppSQLite3Query qry =  m_db.execQuery("select * from tbl_usercase ");
+
+          while(!qry.eof())
+          {
+               //UserCase  *pUC = new UserCase();
+               AnsiString ucName    = qry.fieldValue("name");
+               AnsiString ucKeyList = qry.fieldValue("keylist");
+               int keyMs = qry.getIntField("keyMs",1000);
+               UserCase  *pUC = new UserCase(ucName, ucKeyList,keyMs);
+               m_userCaseMap[ucName] = pUC;
+           
+               qry.nextRow();
+
+
+          }
+
+          qry.finalize();
+
+          return true;
+
+    }
+    catch(CppSQLite3Exception& e)
+    {
+         bylog("用例加载失败..");
+    }
+
+    return false;
+}
 //通过当前遥控器发送编码
 bool RemoteControllerMgr::sendKey(AnsiString keyName)
 {
@@ -411,7 +550,11 @@ bool RemoteControllerMgr::sendKey(AnsiString keyName)
     if(!m_curDev->getKeyCodec(keyName, codec)) return false;
 
     memcpy(cmd, codec.data(),128);
-    
+
+    if(m_record)
+    {
+       recordKey(keyName);
+    }
     return (m_idra.sendKey(cmd) == IDRA_ERR_OK);
 
 }
@@ -450,4 +593,26 @@ bool RemoteControllerMgr::deleteKey(AnsiString keyName)
 bool RemoteControllerMgr::modifyKey(AnsiString keyName,AnsiString newKeyName)
 {
 
+}
+bool RemoteControllerMgr::getUCKeyList(AnsiString ucName,TStringList* list)
+{
+    //
+    if(m_userCaseMap.find(ucName) == m_userCaseMap.end()) return false;
+
+    UserCase* pUc = m_userCaseMap[ucName];
+
+    if(pUc == NULL)   return false;
+
+    return pUc->getKeyList(list);
+    
+}
+size_t RemoteControllerMgr::getUCList(TKeyNameList& list)
+{
+    TUserCaseMap::iterator it = m_userCaseMap.begin();
+    
+    for(; it != m_userCaseMap.end();it++)
+    {
+        list.push_back(it->first);
+    }
+    return list.size();
 }

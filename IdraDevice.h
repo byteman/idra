@@ -24,6 +24,8 @@ public:
 
      IDRA_ERR learnKey(unsigned char codec[128],int timeoutS=5);
      IDRA_ERR sendKey(unsigned char codec[128]);
+     IDRA_ERR readKey(int addr,unsigned char codec[128]);
+     bool checkDevice(int port);
 private:
      unsigned char cmd[256];
      int m_port;

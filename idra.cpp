@@ -7,6 +7,7 @@ USEFORM("FormMain.cpp", Form1);
 USEFORM("FormIdraSet.cpp", frmIdraSet);
 USEFORM("FormKey.cpp", Form2);
 USEFORM("FormRemoteController.cpp", frmRemoteDev);
+USEFORM("FormUcSave.cpp", OKBottomDlg);
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -14,10 +15,11 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     {
          Application->Initialize();
          Application->CreateForm(__classid(TForm1), &Form1);
-                 Application->CreateForm(__classid(TfrmIdraSet), &frmIdraSet);
-                 Application->CreateForm(__classid(TForm2), &Form2);
-                 Application->CreateForm(__classid(TfrmRemoteDev), &frmRemoteDev);
-                 Application->Run();
+         Application->CreateForm(__classid(TfrmIdraSet), &frmIdraSet);
+         Application->CreateForm(__classid(TForm2), &Form2);
+         Application->CreateForm(__classid(TfrmRemoteDev), &frmRemoteDev);
+         Application->CreateForm(__classid(TOKBottomDlg), &OKBottomDlg);
+         Application->Run();
     }
     catch (Exception &exception)
     {

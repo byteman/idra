@@ -18,15 +18,15 @@ object Form1: TForm1
   object grp2: TGroupBox
     Left = 614
     Top = 0
-    Width = 403
-    Height = 655
+    Width = 395
+    Height = 651
     Align = alClient
     Caption = #29992#20363#27979#35797#65306
     TabOrder = 0
     object grp3: TGroupBox
       Left = 2
       Top = 15
-      Width = 399
+      Width = 391
       Height = 105
       Align = alTop
       TabOrder = 0
@@ -39,7 +39,7 @@ object Form1: TForm1
         TabOrder = 0
       end
       object btnPause: TBitBtn
-        Left = 134
+        Left = 142
         Top = 32
         Width = 75
         Height = 25
@@ -61,12 +61,13 @@ object Form1: TForm1
         Height = 25
         Caption = #24405#21046#29992#20363
         TabOrder = 3
+        OnClick = btnRecordClick
       end
     end
     object grp4: TGroupBox
       Left = 2
       Top = 120
-      Width = 399
+      Width = 391
       Height = 289
       Align = alTop
       Caption = #25191#34892#27493#39588#65306
@@ -74,7 +75,7 @@ object Form1: TForm1
       object lstStatus: TListBox
         Left = 2
         Top = 15
-        Width = 395
+        Width = 387
         Height = 272
         Align = alClient
         ItemHeight = 13
@@ -84,16 +85,16 @@ object Form1: TForm1
     object grp5: TGroupBox
       Left = 2
       Top = 409
-      Width = 399
-      Height = 244
+      Width = 391
+      Height = 240
       Align = alClient
       Caption = #24037#20316#35760#24405#65306
       TabOrder = 2
       object mmoInfo: TMemo
         Left = 2
         Top = 15
-        Width = 395
-        Height = 227
+        Width = 387
+        Height = 223
         Align = alClient
         ScrollBars = ssVertical
         TabOrder = 0
@@ -104,7 +105,7 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 249
-    Height = 655
+    Height = 651
     Align = alLeft
     Caption = #29992#20363#21015#34920
     TabOrder = 1
@@ -112,7 +113,7 @@ object Form1: TForm1
       Left = 2
       Top = 15
       Width = 245
-      Height = 638
+      Height = 634
       Align = alClient
       ItemHeight = 13
       Items.Strings = (
@@ -123,12 +124,13 @@ object Form1: TForm1
         #27979#35797#29992#20363'5')
       ScrollWidth = 1
       TabOrder = 0
+      OnClick = lstUserCaseClick
     end
   end
   object rzstsbr1: TRzStatusBar
     Left = 0
-    Top = 655
-    Width = 1017
+    Top = 651
+    Width = 1009
     Height = 19
     BorderInner = fsNone
     BorderOuter = fsNone
@@ -164,7 +166,7 @@ object Form1: TForm1
     Left = 249
     Top = 0
     Width = 365
-    Height = 655
+    Height = 651
     Align = alLeft
     Caption = #36965#25511#22120#21517#31216#65306
     TabOrder = 3
@@ -185,7 +187,7 @@ object Form1: TForm1
     end
     object grpStandKey: TGroupBox
       Left = 2
-      Top = 133
+      Top = 129
       Width = 361
       Height = 336
       Align = alBottom
@@ -194,7 +196,7 @@ object Form1: TForm1
     end
     object grpUserKey: TGroupBox
       Left = 2
-      Top = 469
+      Top = 465
       Width = 361
       Height = 184
       Align = alBottom
@@ -211,10 +213,6 @@ object Form1: TForm1
       ItemHeight = 13
       TabOrder = 2
       OnChange = cbbDeviceChange
-      Items.Strings = (
-        #36965#25511#22120'1'
-        #36965#25511#22120'2'
-        #36965#25511#22120'3')
     end
     object btnNew: TBitBtn
       Left = 24

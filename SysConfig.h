@@ -2,16 +2,16 @@
 
 #ifndef SysConfigH
 #define SysConfigH
-#include "CppSQLite3.h"
+#include "ByDBConfig.h"
 #include <Classes.hpp>
 //---------------------------------------------------------------------------
-class SystemConfig
+struct SystemConfig
 {
-public:
-        SystemConfig();
-        bool load();
-        int port;
-        AnsiString devName;
-        CppSQLite3DB m_db;
+    SystemConfig();
+    bool load();
+    bool save();
+    int port;
+    AnsiString devName;
+    ByDBConfig config;
 };
 #endif

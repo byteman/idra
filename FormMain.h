@@ -82,6 +82,8 @@ __published:	// IDE-managed Components
         void __fastcall mmMDevClick(TObject *Sender);
         void __fastcall btnLearnClick(TObject *Sender);
         void __fastcall mmLogClearClick(TObject *Sender);
+    void __fastcall btnRecordClick(TObject *Sender);
+    void __fastcall lstUserCaseClick(TObject *Sender);
         //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations
@@ -99,6 +101,8 @@ private:	// User declarations
     void __fastcall modifyDevice(TObject *Sender);
     void __fastcall learnKey(TObject *Sender);
     int  __fastcall findItem(AnsiString item);
+    void __fastcall updateUserCaseList();
+    void __fastcall updateUcKeyList(AnsiString &ucName);
 
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);
