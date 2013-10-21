@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 201
-  Top = 14
+  Left = 196
+  Top = 2
   Width = 1025
   Height = 728
   Caption = #36965#25511#22120#27169#25311#22120'V1.0'
@@ -37,6 +37,7 @@ object Form1: TForm1
         Height = 25
         Caption = #36816#34892#29992#20363
         TabOrder = 0
+        OnClick = btnPlayClick
       end
       object btnPause: TBitBtn
         Left = 142
@@ -44,23 +45,17 @@ object Form1: TForm1
         Width = 75
         Height = 25
         Caption = #26242#20572
+        Enabled = False
         TabOrder = 1
+        OnClick = btnPauseClick
       end
-      object btnResume: TBitBtn
-        Left = 272
+      object btnRecord: TBitBtn
+        Left = 256
         Top = 32
         Width = 75
         Height = 25
-        Caption = #32487#32493
-        TabOrder = 2
-      end
-      object btnRecord: TBitBtn
-        Left = 24
-        Top = 72
-        Width = 75
-        Height = 25
         Caption = #24405#21046#29992#20363
-        TabOrder = 3
+        TabOrder = 2
         OnClick = btnRecordClick
       end
     end
@@ -140,7 +135,7 @@ object Form1: TForm1
       Align = alLeft
       Caption = #24403#21069#36965#25511#22120#65306'ZCX100'
     end
-    object rzstspn2: TRzStatusPane
+    object statusUC: TRzStatusPane
       Left = 249
       Top = 0
       Width = 368
@@ -343,5 +338,11 @@ object Form1: TForm1
     object mmUCDelAll: TMenuItem
       Caption = #28165#31354#25152#26377#29992#20363
     end
+  end
+  object tmr1: TTimer
+    Enabled = False
+    OnTimer = tmr1Timer
+    Left = 520
+    Top = 16
   end
 end

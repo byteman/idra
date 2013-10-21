@@ -470,6 +470,13 @@ void RemoteControllerMgr::StopRecord()
      m_record = false;
 }
 
+bool RemoteControllerMgr::InsertUserCaseToMap(AnsiString ucName,AnsiString ucKeyList,int keyMs)
+{
+     UserCase  *pUC = new UserCase(ucName, ucKeyList,keyMs);
+     m_userCaseMap[ucName] = pUC;
+
+     return true;
+}
 bool RemoteControllerMgr::SaveRecordToUserCase(AnsiString ucName)
 {
     bool exist = false;
@@ -497,6 +504,7 @@ bool RemoteControllerMgr::SaveRecordToUserCase(AnsiString ucName)
 
           m_db.execDML(sql);
 
+          InsertUserCaseToMap(ucName, m_keyList->CommaText,1000);
           return true;
     }
     catch(CppSQLite3Exception& e)
@@ -519,9 +527,9 @@ bool RemoteControllerMgr::loadUserCase()
                AnsiString ucName    = qry.fieldValue("name");
                AnsiString ucKeyList = qry.fieldValue("keylist");
                int keyMs = qry.getIntField("keyMs",1000);
-               UserCase  *pUC = new UserCase(ucName, ucKeyList,keyMs);
-               m_userCaseMap[ucName] = pUC;
-           
+
+               InsertUserCaseToMap(ucName, ucKeyList,keyMs);
+             
                qry.nextRow();
 
 
@@ -555,6 +563,7 @@ bool RemoteControllerMgr::sendKey(AnsiString keyName)
     {
        recordKey(keyName);
     }
+    bylog("·¢ËÍ[%s]¼ü",keyName);
     return (m_idra.sendKey(cmd) == IDRA_ERR_OK);
 
 }
@@ -594,16 +603,23 @@ bool RemoteControllerMgr::modifyKey(AnsiString keyName,AnsiString newKeyName)
 {
 
 }
-bool RemoteControllerMgr::getUCKeyList(AnsiString ucName,TStringList* list)
+UserCase* RemoteControllerMgr::getUserCase(AnsiString ucName)
+{
+    if(m_userCaseMap.find(ucName) == m_userCaseMap.end()) return NULL;
+
+    return  m_userCaseMap[ucName];
+}
+TStringList*  RemoteControllerMgr::getUCKeyList(AnsiString ucName)
 {
     //
-    if(m_userCaseMap.find(ucName) == m_userCaseMap.end()) return false;
+    if(m_userCaseMap.find(ucName) == m_userCaseMap.end()) return NULL;
 
     UserCase* pUc = m_userCaseMap[ucName];
 
-    if(pUc == NULL)   return false;
+    if(pUc == NULL)   return NULL;
 
-    return pUc->getKeyList(list);
+    //ms = pUc->getInterval();
+    return pUc->getKeyList();
     
 }
 size_t RemoteControllerMgr::getUCList(TKeyNameList& list)
@@ -617,7 +633,40 @@ size_t RemoteControllerMgr::getUCList(TKeyNameList& list)
     return list.size();
 }
 
+bool RemoteControllerMgr::deleteUserCaseFromMap(AnsiString ucName)
+{
+    TUserCaseMap::iterator it = m_userCaseMap.find(ucName);
+     if(it != m_userCaseMap.end())
+     {
+        UserCase* p = it->second;
+        delete p; 
+        m_userCaseMap.erase(it);
+     }
+     return true;
+}
+bool RemoteControllerMgr::deleteUserCaseFromDB(AnsiString ucName)
+{
+    try
+    {
+          CppSQLite3Buffer sql;
+
+          sql.format("delete from tbl_usercase where name=%Q",ucName);
+          m_db.execDML(sql);
+
+          return true;
+    }
+    catch(CppSQLite3Exception& e)
+    {
+
+
+    }
+    return false;
+}
 bool RemoteControllerMgr::deleteUserCase(AnsiString ucName)
 {
-     return true;
+      if(!deleteUserCaseFromDB(ucName))
+      {
+           return false;
+      }
+      return  deleteUserCaseFromMap(ucName);
 }

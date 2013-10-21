@@ -49,16 +49,20 @@ public:
       void StartRecord();
       void StopRecord();
       bool SaveRecordToUserCase(AnsiString ucName);
+      bool InsertUserCaseToMap(AnsiString ucName,AnsiString ucKeyList,int keyMs);
       //usercase play
       bool StartPlayUserCase(AnsiString ucName);
       bool StopUserCase(AnsiString ucName);
       bool deleteUserCase(AnsiString ucName);
+      bool deleteUserCaseFromMap(AnsiString ucName);
+      bool deleteUserCaseFromDB(AnsiString ucName);
       //usercase load&create
       bool loadUserCase();
       //获取用例列表
       size_t getUCList(TKeyNameList& list);
+      UserCase* getUserCase(AnsiString ucName);
       //获取某个用例的按键列表
-      bool getUCKeyList(AnsiString ucName,TStringList* list);
+      TStringList* getUCKeyList(AnsiString ucName);
 private:
       void deleteFromDeviceList(AnsiString &name);
       void handleIdraError(IDRA_ERR err);

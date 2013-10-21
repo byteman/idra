@@ -12,13 +12,16 @@ class UserCase
 public:
     UserCase(AnsiString name,AnsiString context="",int intervalMS=1000);
     bool getKeyList(TStringList* keyList);
+    TStringList* getKeyList();
     int  getInterval();
     void reset();
-
-    bool getNextKey(AnsiString& key);
+    size_t getKeyCount();
+    size_t getNextKey(AnsiString& key);
+    AnsiString getName();
 private:
-    AnsiString m_name;
-    AnsiString m_context;
+    AnsiString   m_name;
+    TStringList* m_context;
     int m_interval_ms;
+    int m_index;
 };
 #endif

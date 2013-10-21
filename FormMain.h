@@ -34,13 +34,12 @@ __published:	// IDE-managed Components
         TGroupBox *grp3;
         TBitBtn *btnPlay;
         TBitBtn *btnPause;
-        TBitBtn *btnResume;
         TGroupBox *grp4;
         TListBox *lstStatus;
         TGroupBox *grp5;
         TMemo *mmoInfo;
         TRzStatusPane *statusName;
-        TRzStatusPane *rzstspn2;
+        TRzStatusPane *statusUC;
         TRzStatusPane *rzstspn3;
         TPopupMenu *pm1;
         TMenuItem *mmKeyAdd;
@@ -67,6 +66,7 @@ __published:	// IDE-managed Components
         TPopupMenu *pm3;
         TMenuItem *mmUCDel;
         TMenuItem *mmUCDelAll;
+        TTimer *tmr1;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall onKeyClick(TObject *Sender);
         void __fastcall onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
@@ -90,6 +90,9 @@ __published:	// IDE-managed Components
         void __fastcall lstUserCaseMouseUp(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
         void __fastcall mmUCDelClick(TObject *Sender);
+        void __fastcall btnPlayClick(TObject *Sender);
+        void __fastcall tmr1Timer(TObject *Sender);
+        void __fastcall btnPauseClick(TObject *Sender);
         //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations

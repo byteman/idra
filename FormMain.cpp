@@ -26,6 +26,8 @@ static bool bLearn = false;
 static KeyGroup* keyGroupUser = NULL;
 static KeyGroup* keyGroupStand = NULL;
 static TButton*  pSelectButton = NULL;
+static TStringList* pUcKeyList = NULL;
+static UserCase* pUserCase = NULL;
 typedef std::map<AnsiString,TButton*> TButtonMap;
 static const char* gStandKeyList[] =
 {
@@ -41,6 +43,7 @@ static const char* gStandKeyList[] =
 __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
 {
+    pUcKeyList = new TStringList();
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::loadKeys(void)
@@ -149,7 +152,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
           updateUserCaseList();
           disableWork(false);
       }
-
+      statusUC->Caption = "没有选中用例";
       //cbbDevice->Handle
 
 
@@ -531,9 +534,9 @@ void __fastcall TForm1::btnRecordClick(TObject *Sender)
                     bylog("用例[%s]保存成功",ucName);
                 }
                 else  bylog("用例[%s]保存失败",ucName);
+                updateUserCaseList();
 
-
-                }
+            }
             else  bylog("用例名不能为空");
 
         }
@@ -554,10 +557,10 @@ void __fastcall TForm1::btnRecordClick(TObject *Sender)
 
 void __fastcall TForm1::updateUcKeyList(AnsiString &ucName)
 {
-     TStringList* list = new TStringList;
-     RemoteControllerMgr::get()->getUCKeyList(ucName,list);
+     TStringList* list = RemoteControllerMgr::get()->getUCKeyList(ucName) ;//new TStringList;
+     //RemoteControllerMgr::get()->getUCKeyList(ucName,list);
      lstStatus->Items = list;
-     delete list;
+     //delete list;
 }
 void __fastcall TForm1::lstUserCaseClick(TObject *Sender)
 {
@@ -568,7 +571,13 @@ void __fastcall TForm1::lstUserCaseClick(TObject *Sender)
      {
           AnsiString ucName = lstUserCase->Items->Strings[index];
           updateUcKeyList(ucName);
-          
+
+          pUserCase = RemoteControllerMgr::get()->getUserCase(ucName);
+          statusUC->Caption = "当前用例:"+ ucName;
+     }
+     else
+     {
+          statusUC->Caption = "没有选中用例";
      }
 
 }
@@ -595,7 +604,77 @@ void __fastcall TForm1::lstUserCaseMouseUp(TObject *Sender,
 void __fastcall TForm1::mmUCDelClick(TObject *Sender)
 {
      //
-        
+     AnsiString ucName;
+     if(lstUserCase->ItemIndex != -1) //选中了才弹出菜单
+     {
+         ucName =  lstUserCase->Items->Strings[lstUserCase->ItemIndex];
+         if(RemoteControllerMgr::get()->deleteUserCase(ucName))
+         {
+              //lstUserCase->DeleteSelected();
+         }
+         updateUserCaseList();
+     }
+
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btnPlayClick(TObject *Sender)
+{
+
+         if(pUserCase)
+         {
+              if(pUserCase->getKeyCount() > 0)
+              {
+                   bylog("启动运行用例【%s】",pUserCase->getName());
+                   tmr1->Enabled = true;
+                   tmr1->Interval = pUserCase->getInterval();
+                   pUserCase->reset();
+                   btnPause->Caption = "暂停";
+                    btnPause->Enabled = true;
+              }
+         }
+     
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TForm1::tmr1Timer(TObject *Sender)
+{
+    //
+    if(pUserCase)
+    {
+        AnsiString key;
+        int index =  pUserCase->getNextKey(key);
+
+        lstStatus->ItemIndex = index;
+        RemoteControllerMgr::get()->sendKey(key);
+
+        if(index >= pUserCase->getKeyCount()-1)
+        {
+             tmr1->Enabled = false;
+             bylog("用例运行完毕");
+             pUserCase->reset();
+             btnPause->Enabled = false;
+        }
+
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btnPauseClick(TObject *Sender)
+{
+     if(btnPause->Caption == "暂停")
+     {
+          tmr1->Enabled = false;
+          btnPause->Caption = "继续";
+     }
+     else
+     {
+          tmr1->Enabled = true;
+          btnPause->Caption = "暂停";
+     }
+
+}
+//---------------------------------------------------------------------------
+
 
