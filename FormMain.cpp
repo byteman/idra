@@ -574,3 +574,28 @@ void __fastcall TForm1::lstUserCaseClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::lstUserCaseMouseUp(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+       //
+       if(Button == mbRight)
+       {
+             if(lstUserCase->ItemIndex != -1) //选中了才弹出菜单
+             {
+                TPoint pt(X,Y);
+                TPoint pt2 = lstUserCase->ClientToScreen(pt);
+                pm3->Popup(pt2.x,pt2.y);
+             }
+
+       }
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::mmUCDelClick(TObject *Sender)
+{
+     //
+        
+}
+//---------------------------------------------------------------------------
+

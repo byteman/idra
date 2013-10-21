@@ -52,6 +52,7 @@ public:
       //usercase play
       bool StartPlayUserCase(AnsiString ucName);
       bool StopUserCase(AnsiString ucName);
+      bool deleteUserCase(AnsiString ucName);
       //usercase load&create
       bool loadUserCase();
       //获取用例列表

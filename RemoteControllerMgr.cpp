@@ -616,3 +616,8 @@ size_t RemoteControllerMgr::getUCList(TKeyNameList& list)
     }
     return list.size();
 }
+
+bool RemoteControllerMgr::deleteUserCase(AnsiString ucName)
+{
+     return true;
+}
