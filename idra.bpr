@@ -15,7 +15,7 @@
     <RESDEPEN value="$(RESFILES) FormMain.dfm FormIdraSet.dfm FormKey.dfm 
       FormRemoteController.dfm FormUcSave.dfm"/>
     <LIBFILES value="pcommb.lib"/>
-    <LIBRARIES value="Rz30Ctls60.lib yb_base_c6.lib yb_comm_c6.lib"/>
+    <LIBRARIES value="vclx.lib Rz30Ctls60.lib yb_base_c6.lib yb_comm_c6.lib rtl.lib vcl.lib"/>
     <SPARELIBS value="vcl.lib rtl.lib yb_comm_c6.lib yb_base_c6.lib Rz30Ctls60.lib vclx.lib"/>
     <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
       vcldbx.bpi ibxpress.bpi dsnap.bpi cds.bpi bdecds.bpi qrpt.bpi teeqr.bpi 
@@ -32,8 +32,8 @@
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
     <RELEASELIBPATH value="$(BCB)\lib\release"/>
     <LINKER value="ilink32"/>
-    <USERDEFINES value="_DEBUG"/>
-    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <USERDEFINES value=""/>
+    <SYSDEFINES value="NO_STRICT"/>
     <MAINSOURCE value="idra.cpp"/>
     <INCLUDEPATH value="C:\Windows\system32;&quot;C:\Program Files\Raize\RC3\LibBCB6&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl;$(TEEINCPATH)"/>
     <LIBPATH value="C:\Windows\system32;F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;&quot;C:\Program Files\Raize\RC3\LibBCB6&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib"/>
@@ -43,19 +43,18 @@
   <OPTIONS>
     <IDLCFLAGS value="-IC:\Windows\system32 -I&quot;C:\Program Files\Raize\RC3\LibBCB6&quot; 
       -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; -I$(BCB)\include 
-      -I$(BCB)\include\vcl -I$(TEEINCPATH) -src_suffix cpp -D_DEBUG -boa"/>
-    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
-      -tW -tWM"/>
-    <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+      -I$(BCB)\include\vcl -I$(TEEINCPATH) -src_suffix cpp -boa"/>
+    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -a8 -b- -k- -vi -c -tW -tWM"/>
+    <PFLAGS value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
-    <AFLAGS value="/mx /w2 /zd"/>
-    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+    <AFLAGS value="/mx /w2 /zn"/>
+    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn"/>
     <OTHERFILES value=""/>
   </OPTIONS>
   <LINKER>
-    <ALLOBJ value="c0w32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
     <ALLRES value="$(RESFILES)"/>
-    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
     <OTHERFILES value=""/>
   </LINKER>
   <FILELIST>
@@ -114,16 +113,18 @@ Comments=
 c:\program files\borland\cbuilder6\Bin\dcldss60.bpl=Borland Decision Cube Components
 
 [HistoryLists\hlIncludePath]
-Count=3
-Item0=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl;$(TEEINCPATH)
-Item1=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl;$(TEEINCPATH);C:\Program Files\Moxa\PCommLite 1.6\Include
-Item2=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;$(BCB)\include;$(BCB)\include\vcl;E:\res\suipacktrial\Source\BCB6;$(TEEINCPATH)
+Count=4
+Item0=C:\Windows\system32;C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl;$(TEEINCPATH)
+Item1=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl;$(TEEINCPATH)
+Item2=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl;$(TEEINCPATH);C:\Program Files\Moxa\PCommLite 1.6\Include
+Item3=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;$(BCB)\include;$(BCB)\include\vcl;E:\res\suipacktrial\Source\BCB6;$(TEEINCPATH)
 
 [HistoryLists\hlLibraryPath]
-Count=3
-Item0=F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib
-Item1=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib
-Item2=C:\Program Files\Raize\RC3\LibBCB6;F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib;E:\res\suipacktrial\Source\BCB6
+Count=4
+Item0=C:\Windows\system32;F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item1=F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item2=C:\Program Files\Raize\RC3\LibBCB6;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item3=C:\Program Files\Raize\RC3\LibBCB6;F:\cz200-v5\dejoy.teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;C:\Program Files\Borland\CBuilder6\Projects;D:\proj\2013\idra\idra;E:\res\teechart.v8.01.FullSource\Sources\Compiled\Builder6\Lib;$(BCB)\lib\obj;$(BCB)\lib;E:\res\suipacktrial\Source\BCB6
 
 [HistoryLists\hlDebugSourcePath]
 Count=1
