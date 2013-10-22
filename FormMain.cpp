@@ -28,6 +28,7 @@ static KeyGroup* keyGroupStand = NULL;
 static TButton*  pSelectButton = NULL;
 static TStringList* pUcKeyList = NULL;
 static UserCase* pUserCase = NULL;
+static bool bRecord = false;
 typedef std::map<AnsiString,TButton*> TButtonMap;
 static const char* gStandKeyList[] =
 {
@@ -229,7 +230,8 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
           {
               bylog("¡¾%s¡¿¼ü:·¢ËÍ³É¹¦",btn->Caption);
           }
-          lstStatus->AddItem(btn->Caption,Sender);
+          if(bRecord)
+                lstStatus->AddItem(btn->Caption,Sender);
       }
 }
 
@@ -519,7 +521,7 @@ void __fastcall TForm1::mmLogClearClick(TObject *Sender)
 void __fastcall TForm1::btnRecordClick(TObject *Sender)
 {
     //
-    static bool bRecord = false;
+
     if(bRecord)
     {
 
