@@ -11,6 +11,7 @@ struct SystemConfig
     bool load();
     bool save();
     int port;
+    int bps;
     AnsiString devName;
     ByDBConfig config;
 };

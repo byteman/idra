@@ -13,11 +13,12 @@ object frmIdraSet: TfrmIdraSet
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object edtCom: TLabeledEdit
     Left = 128
-    Top = 40
+    Top = 56
     Width = 113
     Height = 21
     EditLabel.Width = 51
@@ -30,7 +31,7 @@ object frmIdraSet: TfrmIdraSet
   end
   object edtBps: TLabeledEdit
     Left = 128
-    Top = 88
+    Top = 96
     Width = 113
     Height = 21
     EditLabel.Width = 51
@@ -41,28 +42,22 @@ object frmIdraSet: TfrmIdraSet
     TabOrder = 1
     Text = '9600'
   end
-  object btnAutoDectect: TBitBtn
-    Left = 32
-    Top = 160
-    Width = 81
-    Height = 33
-    Caption = #26816#27979#35774#22791
-    TabOrder = 2
-  end
   object btnSaveIdra: TBitBtn
-    Left = 136
+    Left = 88
     Top = 160
     Width = 75
     Height = 33
-    Caption = #20445#23384#37197#32622
-    TabOrder = 3
+    Caption = #20445#23384
+    TabOrder = 2
+    OnClick = btnSaveIdraClick
   end
   object btnCancel: TBitBtn
-    Left = 232
+    Left = 200
     Top = 160
     Width = 75
     Height = 33
     Caption = #21462#28040
-    TabOrder = 4
+    TabOrder = 3
+    OnClick = btnCancelClick
   end
 end

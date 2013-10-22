@@ -10,6 +10,7 @@
 #include  <map>
 //---------------------------------------------------------------------------
 
+class  UserCase;
 typedef std::vector<AnsiString> TDeviceNameList;
 typedef std::vector<RemoteController*> TDeviceMap;
 typedef std::map<AnsiString, UserCase*> TUserCaseMap;

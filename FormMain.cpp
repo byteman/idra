@@ -14,6 +14,7 @@
 #include "bylogger.h"
 #include "SysConfig.h"
 #include "FormUcSave.h"
+#include "FormIdraSet.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "YbCommDevice"
@@ -179,7 +180,9 @@ void __fastcall TForm1::learnKey(TObject *Sender)
      {
 
          btnLearn->Caption = "开始学习";
-         bylog("退出工作模式,进入学习模式");
+         mmLearnKey->Caption = "学习按键";
+         
+         bylog("退出学习模式,进入工作模式");
          updateKeyStatus();
      }
      else
@@ -191,7 +194,8 @@ void __fastcall TForm1::learnKey(TObject *Sender)
              return;
          }
          btnLearn->Caption = "停止学习";
-         bylog("退出学习模式,进入工作模式");
+         mmLearnKey->Caption = "停止学习";
+         bylog("退出工作模式,进入学习模式");
          enableAllKey(true);
 
      }
@@ -238,6 +242,8 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
 void __fastcall TForm1::addDevice(TObject *Sender)
 {
      AnsiString newDeviceName = "";
+     frmRemoteDev->Caption = "新建遥控器";
+     //frmRemoteDev->Caption
      frmRemoteDev->ShowModal();
      newDeviceName = frmRemoteDev->devName;
      if(frmRemoteDev->isOk)
@@ -314,6 +320,7 @@ void __fastcall TForm1::modifyDevice(TObject *Sender)
          bylog("当前没有选中遥控器，无法修改");
          return;
      }
+     frmRemoteDev->Caption = "修改遥控器名称";
      frmRemoteDev->ShowModal();
      if(frmRemoteDev->isOk)
      {
@@ -386,10 +393,15 @@ void __fastcall TForm1::grpUserKeyMouseUp(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::mmKeyAddClick(TObject *Sender)
+void __fastcall TForm1::addUserKey(TObject *Sender)
 {
-     //
+     AnsiString   deviceName;
 
+     if(!RemoteControllerMgr::get()->getCurrentCtrlDeviceName(deviceName))
+     {
+         bylog("没有选择遥控器");
+         return;
+     }
      Form2->ShowModal();
      if(Form2->ret)
      {
@@ -402,13 +414,7 @@ void __fastcall TForm1::mmKeyAddClick(TObject *Sender)
           {
              //rcmgr.getCurrentCtrlDevice()->addKey()
              TKeyNameList keyList;
-             AnsiString   deviceName;
 
-             if(!RemoteControllerMgr::get()->getCurrentCtrlDeviceName(deviceName))
-             {
-                 bylog("没有选择遥控器");
-                 return;
-             }
              if(keyGroupUser->existButtonName(name))
              {
                  bylog("改按键已经存在");
@@ -423,6 +429,12 @@ void __fastcall TForm1::mmKeyAddClick(TObject *Sender)
      }
      
 }
+void __fastcall TForm1::mmKeyAddClick(TObject *Sender)
+{
+     //
+     addUserKey(Sender);
+
+}
 //---------------------------------------------------------------------------
 void __fastcall TForm1::onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y)
 {
@@ -431,7 +443,7 @@ void __fastcall TForm1::onButtonSelect(TObject *Sender,TMouseButton Button, TShi
        {
            TPoint pt(X,Y);
 
-           
+
            TControl* pCtrl = (TControl*) Sender;
            TPoint pt2 = pCtrl->ClientToScreen(pt);
 
@@ -645,6 +657,7 @@ void __fastcall TForm1::tmr1Timer(TObject *Sender)
     //
     if(pUserCase)
     {
+      #if 0
         AnsiString key;
         int index =  pUserCase->getNextKey(key);
 
@@ -658,6 +671,22 @@ void __fastcall TForm1::tmr1Timer(TObject *Sender)
              pUserCase->reset();
              btnPause->Enabled = false;
         }
+      #endif
+      int index;
+      bool ret = pUserCase->run(index);
+      if(!ret)
+      {
+           tmr1->Enabled = false;
+           bylog("用例运行完毕");
+           pUserCase->reset();
+           btnPause->Enabled = false;
+      }
+      else
+      {
+           
+      }
+      lstStatus->ItemIndex = index;
+
 
     }
 }
@@ -678,5 +707,27 @@ void __fastcall TForm1::btnPauseClick(TObject *Sender)
 
 }
 //---------------------------------------------------------------------------
+
+
+
+void __fastcall TForm1::mmLearnKeyClick(TObject *Sender)
+{
+    learnKey(Sender);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::N1Click(TObject *Sender)
+{
+    addUserKey(Sender);
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::mmIdraClick(TObject *Sender)
+{
+    frmIdraSet->ShowModal();
+}
+//---------------------------------------------------------------------------
+
 
 

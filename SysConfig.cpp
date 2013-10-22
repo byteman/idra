@@ -19,6 +19,7 @@ bool SystemConfig::load()
 {
 
     port = config.ReadInteger("config","port",6);
+    bps  = config.ReadInteger("config","bps",9600);
     devName  = config.ReadString("config","curDevice","").c_str();
 
     return true;
@@ -26,6 +27,7 @@ bool SystemConfig::load()
 bool SystemConfig::save()
 {
     config.WriteInteger("config","port",port);
-    config.ReadString("config","curDevice",devName.c_str());
+    config.WriteString("config","curDevice",devName.c_str());
+    config.WriteInteger("config","bps",bps);
     return true;
 }

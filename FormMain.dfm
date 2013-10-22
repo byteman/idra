@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 196
-  Top = 2
+  Left = 141
+  Top = 34
   Width = 1025
   Height = 728
   Caption = #36965#25511#22120#27169#25311#22120'V1.0'
@@ -18,15 +18,15 @@ object Form1: TForm1
   object grp2: TGroupBox
     Left = 614
     Top = 0
-    Width = 403
-    Height = 655
+    Width = 395
+    Height = 651
     Align = alClient
     Caption = #29992#20363#27979#35797#65306
     TabOrder = 0
     object grp3: TGroupBox
       Left = 2
       Top = 15
-      Width = 399
+      Width = 391
       Height = 105
       Align = alTop
       TabOrder = 0
@@ -62,34 +62,86 @@ object Form1: TForm1
     object grp4: TGroupBox
       Left = 2
       Top = 120
-      Width = 399
+      Width = 391
       Height = 289
       Align = alTop
-      Caption = #25191#34892#27493#39588#65306
+      Caption = #29992#20363#25191#34892#27493#39588#65306
       TabOrder = 1
       object lstStatus: TListBox
         Left = 2
         Top = 15
-        Width = 395
+        Width = 294
         Height = 272
         Align = alClient
         ItemHeight = 13
         TabOrder = 0
       end
+      object pnl1: TPanel
+        Left = 296
+        Top = 15
+        Width = 93
+        Height = 272
+        Align = alRight
+        TabOrder = 1
+        object btnUp: TBitBtn
+          Left = 24
+          Top = 64
+          Width = 41
+          Height = 33
+          Caption = #19978#31227
+          TabOrder = 0
+        end
+        object btnDown: TBitBtn
+          Left = 24
+          Top = 104
+          Width = 41
+          Height = 41
+          Caption = #19979#31227
+          TabOrder = 1
+        end
+        object btnDelKey: TBitBtn
+          Left = 24
+          Top = 160
+          Width = 41
+          Height = 41
+          Caption = #21024#38500
+          TabOrder = 2
+        end
+        object btnModifyKey: TBitBtn
+          Left = 24
+          Top = 216
+          Width = 41
+          Height = 41
+          Caption = #20462#25913
+          TabOrder = 3
+        end
+        object edtKeyTime: TLabeledEdit
+          Left = 16
+          Top = 24
+          Width = 65
+          Height = 21
+          EditLabel.Width = 63
+          EditLabel.Height = 13
+          EditLabel.Caption = #38388#38548#26102#38388#65306' '
+          LabelPosition = lpAbove
+          LabelSpacing = 3
+          TabOrder = 4
+        end
+      end
     end
     object grp5: TGroupBox
       Left = 2
       Top = 409
-      Width = 399
-      Height = 244
+      Width = 391
+      Height = 240
       Align = alClient
       Caption = #24037#20316#35760#24405#65306
       TabOrder = 2
       object mmoInfo: TMemo
         Left = 2
         Top = 15
-        Width = 395
-        Height = 227
+        Width = 387
+        Height = 223
         Align = alClient
         ScrollBars = ssVertical
         TabOrder = 0
@@ -100,7 +152,7 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 249
-    Height = 655
+    Height = 651
     Align = alLeft
     Caption = #29992#20363#21015#34920
     TabOrder = 1
@@ -108,7 +160,7 @@ object Form1: TForm1
       Left = 2
       Top = 15
       Width = 245
-      Height = 638
+      Height = 634
       Align = alClient
       ItemHeight = 13
       ScrollWidth = 1
@@ -119,8 +171,8 @@ object Form1: TForm1
   end
   object rzstsbr1: TRzStatusBar
     Left = 0
-    Top = 655
-    Width = 1017
+    Top = 651
+    Width = 1009
     Height = 19
     BorderInner = fsNone
     BorderOuter = fsNone
@@ -156,7 +208,7 @@ object Form1: TForm1
     Left = 249
     Top = 0
     Width = 365
-    Height = 655
+    Height = 651
     Align = alLeft
     Caption = #36965#25511#22120#21517#31216#65306
     TabOrder = 3
@@ -177,7 +229,7 @@ object Form1: TForm1
     end
     object grpStandKey: TGroupBox
       Left = 2
-      Top = 133
+      Top = 129
       Width = 361
       Height = 336
       Align = alBottom
@@ -186,7 +238,7 @@ object Form1: TForm1
     end
     object grpUserKey: TGroupBox
       Left = 2
-      Top = 469
+      Top = 465
       Width = 361
       Height = 184
       Align = alBottom
@@ -259,6 +311,7 @@ object Form1: TForm1
     Top = 80
     object mmIdra: TMenuItem
       Caption = #32418#22806#35774#22791#35774#32622
+      OnClick = mmIdraClick
     end
     object mmCtrl: TMenuItem
       Caption = #36965#25511#22120#31649#29702
@@ -280,16 +333,12 @@ object Form1: TForm1
       object mmLearnKey: TMenuItem
         Caption = #23398#20064#25353#38190
         ShortCut = 16460
+        OnClick = mmLearnKeyClick
       end
       object N1: TMenuItem
         Caption = #28155#21152#33258#23450#20041#25353#38190
         ShortCut = 16459
-      end
-    end
-    object mmUserCase: TMenuItem
-      Caption = #29992#20363#31649#29702
-      object mmAddUC: TMenuItem
-        Caption = #28155#21152#29992#20363
+        OnClick = N1Click
       end
     end
     object mmLog: TMenuItem
@@ -308,9 +357,6 @@ object Form1: TForm1
       Caption = #28155#21152#33258#23450#38190
       OnClick = mmKeyAddClick
     end
-    object mmClearAll: TMenuItem
-      Caption = #28165#38500#20840#37096#25353#38190
-    end
   end
   object pm2: TPopupMenu
     Left = 832
@@ -322,10 +368,6 @@ object Form1: TForm1
     object mmKeyDel: TMenuItem
       Caption = #21024#38500#25353#38190
       OnClick = mmKeyDelClick
-    end
-    object mmKeyM: TMenuItem
-      Caption = #20462#25913#25353#38190
-      OnClick = mmKeyMClick
     end
   end
   object pm3: TPopupMenu

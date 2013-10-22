@@ -22,7 +22,6 @@ __published:	// IDE-managed Components
         TMainMenu *mm1;
         TMenuItem *mmIdra;
         TMenuItem *mmCtrl;
-        TMenuItem *mmUserCase;
         TGroupBox *grp2;
         TGroupBox *grp1;
         TRzStatusBar *rzstsbr1;
@@ -43,7 +42,6 @@ __published:	// IDE-managed Components
         TRzStatusPane *rzstspn3;
         TPopupMenu *pm1;
         TMenuItem *mmKeyAdd;
-        TMenuItem *mmAddUC;
         TBitBtn *btnRecord;
         TLabel *lbl1;
         TComboBox *cbbDevice;
@@ -55,18 +53,22 @@ __published:	// IDE-managed Components
         TShape *shpIdra;
         TPopupMenu *pm2;
         TMenuItem *mmKeyDel;
-        TMenuItem *mmKeyM;
         TMenuItem *mmKeyAdd2;
         TMenuItem *mmMDev;
         TMenuItem *mmLearnKey;
         TMenuItem *N1;
         TMenuItem *mmLog;
         TMenuItem *mmLogClear;
-        TMenuItem *mmClearAll;
         TPopupMenu *pm3;
         TMenuItem *mmUCDel;
         TMenuItem *mmUCDelAll;
         TTimer *tmr1;
+    TPanel *pnl1;
+    TBitBtn *btnUp;
+    TBitBtn *btnDown;
+    TBitBtn *btnDelKey;
+    TBitBtn *btnModifyKey;
+    TLabeledEdit *edtKeyTime;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall onKeyClick(TObject *Sender);
         void __fastcall onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
@@ -93,6 +95,9 @@ __published:	// IDE-managed Components
         void __fastcall btnPlayClick(TObject *Sender);
         void __fastcall tmr1Timer(TObject *Sender);
         void __fastcall btnPauseClick(TObject *Sender);
+    void __fastcall mmLearnKeyClick(TObject *Sender);
+    void __fastcall N1Click(TObject *Sender);
+    void __fastcall mmIdraClick(TObject *Sender);
         //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations
@@ -106,6 +111,7 @@ private:	// User declarations
     void __fastcall updateKeyStatus();
     void __fastcall enableAllKey(bool en=true);
     void __fastcall addDevice(TObject *Sender);
+    void __fastcall addUserKey(TObject *Sender);
     void __fastcall delDevice(TObject *Sender);
     void __fastcall modifyDevice(TObject *Sender);
     void __fastcall learnKey(TObject *Sender);

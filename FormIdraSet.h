@@ -15,12 +15,15 @@ class TfrmIdraSet : public TForm
 __published:	// IDE-managed Components
         TLabeledEdit *edtCom;
         TLabeledEdit *edtBps;
-        TBitBtn *btnAutoDectect;
         TBitBtn *btnSaveIdra;
         TBitBtn *btnCancel;
+    void __fastcall btnSaveIdraClick(TObject *Sender);
+    void __fastcall FormShow(TObject *Sender);
+    void __fastcall btnCancelClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TfrmIdraSet(TComponent* Owner);
+        int port;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmIdraSet *frmIdraSet;
