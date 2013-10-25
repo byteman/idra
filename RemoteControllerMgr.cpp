@@ -95,32 +95,7 @@ bool RemoteControllerMgr::createDeviceTable()
       }
       return exist;
 }
-bool RemoteControllerMgr::createUserCaseTable()
-{
-      bool exist = false;
-      try
-      {
-           #if 1
-           const char*    sql     = "CREATE TABLE tbl_usercase (  \
-                                      name    TEXT    NOT NULL,    \
-                                      keylist TEXT,                 \
-                                      keyMs   INTEGER                \
-                                  );                                  \
-                    ";
 
-          #endif
-              
-          m_db.execDML(sql);
-          exist = true;
-      }
-      catch(CppSQLite3Exception& e)
-      {
-      
-      }
-
-      
-      return exist;
-}
 bool RemoteControllerMgr::checkDB(CppSQLite3DB& db)
 {
    //
@@ -189,6 +164,11 @@ bool RemoteControllerMgr::load()
 
     return false;
 }
+
+/*
+        遥控器管理模块
+        1.遥控器的添加、删除、修改。
+*/
 RemoteController* RemoteControllerMgr::existDevice( AnsiString& name)
 {
      RemoteController* pDev = NULL;
@@ -454,100 +434,7 @@ bool RemoteControllerMgr::learnKey(AnsiString keyName,int timeS)
 
     return m_curDev->addKey(keyName, codec, type); //新增加按键编码
 }
-void RemoteControllerMgr::recordKey(AnsiString keyName)
-{
-      if(m_keyList)
-      {
-         m_keyList->Add(keyName);
-      }
-}
-void RemoteControllerMgr::StartRecord()
-{
-     m_record = true;
-     m_keyList->Clear();
-}
-void RemoteControllerMgr::StopRecord()
-{
-     m_record = false;
-}
 
-bool RemoteControllerMgr::InsertUserCaseToMap(AnsiString ucName,AnsiString ucKeyList,int keyMs)
-{
-     UserCase  *pUC = new UserCase(ucName, ucKeyList,keyMs);
-     m_userCaseMap[ucName] = pUC;
-
-     return true;
-}
-bool RemoteControllerMgr::SaveRecordToUserCase(AnsiString ucName)
-{
-    bool exist = false;
-    try
-    {
-          CppSQLite3Buffer sql;
-
-          sql.format("select * from tbl_usercase where name=%Q",ucName);
-
-          CppSQLite3Query qry =  m_db.execQuery(sql);
-
-          if(!qry.eof())
-          {
-             bylog("用例已经存在");
-
-             exist = true;
-          }
-          qry.finalize();
-          if(exist) return false;
-
-
-          
-
-          sql.format("insert or rollback into tbl_usercase (name,keylist,keyMs) values(%Q,%Q,%d)",ucName,m_keyList->CommaText,1000);
-
-          m_db.execDML(sql);
-
-          InsertUserCaseToMap(ucName, m_keyList->CommaText,1000);
-          return true;
-    }
-    catch(CppSQLite3Exception& e)
-    {
-
-
-    }
-    return false;
-}
-bool RemoteControllerMgr::loadUserCase()
-{
-    //m_userCaseMap
-    try
-    {
-          CppSQLite3Query qry =  m_db.execQuery("select * from tbl_usercase ");
-
-          while(!qry.eof())
-          {
-               //UserCase  *pUC = new UserCase();
-               AnsiString ucName    = qry.fieldValue("name");
-               AnsiString ucKeyList = qry.fieldValue("keylist");
-               int keyMs = qry.getIntField("keyMs",1000);
-
-               InsertUserCaseToMap(ucName, ucKeyList,keyMs);
-             
-               qry.nextRow();
-
-
-          }
-
-          qry.finalize();
-
-          return true;
-
-    }
-    catch(CppSQLite3Exception& e)
-    {
-         bylog("用例加载失败..");
-    }
-
-    return false;
-}
 //通过当前遥控器发送编码
 bool RemoteControllerMgr::sendKey(AnsiString keyName)
 {
@@ -604,6 +491,139 @@ bool RemoteControllerMgr::modifyKey(AnsiString keyName,AnsiString newKeyName)
 {
 
 }
+
+
+////////////用例管理模块/////////////////////////////////////////////////
+bool RemoteControllerMgr::createUserCaseTable()
+{
+      bool exist = false;
+      try
+      {
+           #if 1
+           const char*    sql     = "CREATE TABLE tbl_usercase (  \
+                                      name    TEXT    NOT NULL,    \
+                                      keylist TEXT,                 \
+                                      keyMs   INTEGER                \
+                                  );                                  \
+                    ";
+
+          #endif
+              
+          m_db.execDML(sql);
+          exist = true;
+      }
+      catch(CppSQLite3Exception& e)
+      {
+      
+      }
+
+      
+      return exist;
+}
+
+
+
+void RemoteControllerMgr::recordKey(AnsiString keyName)
+{
+      DWORD tick = GetTickCount();
+      
+      int keyS = (tick - m_record_time )/1000;
+      m_record_time =  tick;
+      
+      if(m_curUserCase)
+      {
+          m_curUserCase->addKey(keyS, keyName);
+      }
+     
+}
+void RemoteControllerMgr::StartRecord()
+{
+     m_record = true;
+     m_record_time = GetTickCount();
+     m_keyList->Clear();
+}
+void RemoteControllerMgr::StopRecord()
+{
+     m_record = false;
+}
+
+bool RemoteControllerMgr::checkExistUcTable(AnsiString ucName)
+{
+     AnsiString tblname = "tbl_uc_"+ucName;
+
+     return m_db.tableExists(tblname.c_str());
+}
+bool RemoteControllerMgr::deleteInvalidUcItem(AnsiString ucName)
+{
+
+}
+UserCase* RemoteControllerMgr::getCurrUserCase()
+{
+     return m_curUserCase;
+}
+//在内存中创建用例对象和加载数据。
+bool RemoteControllerMgr::InsertUserCaseToMap(AnsiString ucName)
+{
+
+     UserCase  *pUC = new UserCase(ucName);
+     m_userCaseMap[ucName] = pUC;
+
+     return true;
+}
+bool RemoteControllerMgr::SaveRecordToUserCase(AnsiString ucName)
+{
+    UserCase  *pUC = NULL;
+    if(ucName == "")
+    {
+         pUC = m_curUserCase;
+    }
+    else
+         pUC = getUserCase(ucName);
+
+    if(pUC == NULL) return false;
+
+    pUC->saveKeys();
+    return false;
+}
+bool RemoteControllerMgr::loadUserCase()
+{
+    //m_userCaseMap
+    try
+    {
+          CppSQLite3Query qry =  m_db.execQuery("select * from tbl_usercase ");
+
+          while(!qry.eof())
+          {
+ 
+               AnsiString ucName    = qry.fieldValue("uc_name");
+
+               if(!checkExistUcTable(ucName))  //如果没有该用例名对应的表，则删除掉改用例名
+               {
+                   deleteUserCaseFromDB( ucName);
+                   qry.nextRow();
+                   continue;
+               }
+
+               InsertUserCaseToMap(ucName);
+             
+               qry.nextRow();
+
+
+          }
+
+          qry.finalize();
+
+          return true;
+
+    }
+    catch(CppSQLite3Exception& e)
+    {
+         bylog("用例加载失败..");
+    }
+
+    return false;
+}
+
 UserCase* RemoteControllerMgr::getUserCase(AnsiString ucName)
 {
     if(m_userCaseMap.find(ucName) == m_userCaseMap.end()) return NULL;
@@ -651,7 +671,7 @@ bool RemoteControllerMgr::deleteUserCaseFromDB(AnsiString ucName)
     {
           CppSQLite3Buffer sql;
 
-          sql.format("delete from tbl_usercase where name=%Q",ucName);
+          sql.format("delete from tbl_usercase where uc_name=%Q",ucName);
           m_db.execDML(sql);
 
           return true;
@@ -671,3 +691,147 @@ bool RemoteControllerMgr::deleteUserCase(AnsiString ucName)
       }
       return  deleteUserCaseFromMap(ucName);
 }
+//设置当前的用例名称。
+bool RemoteControllerMgr::SetCurrUserCase(AnsiString ucName)
+{
+     UserCase* pUc = getUserCase(ucName);
+     if( !pUc) return false;
+
+     m_curUserCase = pUc;
+     
+}
+bool RemoteControllerMgr::getUcKeyList(AnsiString ucName,TUserCaseKeyList& keyList)
+{
+    UserCase* pUc = getUserCase(ucName);
+    if(!pUc) return false;
+
+    return pUc->getKeyList(keyList);
+}
+int  RemoteControllerMgr::getUcKeyTime(AnsiString ucName,int indexKey)
+{
+     UserCase* pUc = getUserCase(ucName);
+     if(!pUc) return -1;
+     
+     return pUc->getKeyTime(indexKey);
+}
+bool RemoteControllerMgr::addNewUserCaseToDB(AnsiString ucName)
+{
+     CppSQLite3Buffer sql;
+     bool ok = false;
+
+     AnsiString ucTblName = "tbl_uc_" + ucName;
+     if(m_db.tableExists(ucTblName.c_str()))
+     {
+           bylog("数据库中[%s]表已经存在",ucTblName);
+           return false;
+     }
+
+     sql.format("CREATE TABLE tbl_uc_%s (name TEXT NOT NULL, keytime INTEGER NOT NULL );", ucName);
+
+     try
+     {
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+
+     return ok;
+}
+bool RemoteControllerMgr::DBExistUserCase(AnsiString ucName)
+{
+    bool exist = false;
+    try
+    {
+          CppSQLite3Buffer sql;
+
+          sql.format("select * from tbl_usercase where uc_name=%Q",ucName);
+
+          CppSQLite3Query qry =  m_db.execQuery(sql);
+
+          if(!qry.eof())
+          {
+              exist = true;
+          }
+          qry.finalize();
+
+    }
+    catch(CppSQLite3Exception& e)
+    {
+
+
+    }
+    return exist;
+}
+bool RemoteControllerMgr::AddUserCase(AnsiString ucName,AnsiString deviceName)
+{
+
+    if(DBExistUserCase(ucName))
+    {
+       bylog("用例表中已经存在%s",ucName);
+       return false;
+    }
+
+    try
+    {
+          
+          CppSQLite3Buffer sql;
+          sql.format("insert or rollback into tbl_usercase (uc_name,device) values(%Q,%Q)",ucName,deviceName);
+
+          m_db.execDML(sql);
+          return true;
+    }
+    catch(CppSQLite3Exception& e)
+    {
+
+
+    }
+    return false;
+}
+/*
+创建一个新的用例
+*/
+bool RemoteControllerMgr::createNewUserCase(AnsiString ucName,AnsiString device)
+{
+
+//判断内存中是否存在。
+     if(existUserCase(ucName))
+     {
+         bylog("用例 %s 已经存在了",ucName);
+         return false;
+     }
+     if(!AddUserCase(ucName, device))
+     {
+         return false;
+     }
+//插入 新的用例。
+     if(!addNewUserCaseToDB(ucName))
+     {
+        bylog("创建用例表失败");
+        return false;
+     }
+
+     InsertUserCaseToMap(ucName);
+     
+}
+//判断用例名是否已经存在了。
+bool RemoteControllerMgr::existUserCase(AnsiString ucName)
+{
+
+     return (m_userCaseMap.find(ucName) != m_userCaseMap.end());
+}
+bool RemoteControllerMgr::deleteUcKey(int index)
+{
+     if(!m_curUserCase) return false;
+
+     return m_curUserCase->deleteKey(index);
+}
+
+
+
+

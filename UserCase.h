@@ -5,7 +5,7 @@
 #include <classes.hpp>
 #include <vector>
 #include "cppSqlite3.h"
-#include "RemoteControllerMgr.h"
+
 struct UserCaseKey
 {
     UserCaseKey()
@@ -25,17 +25,18 @@ struct UserCaseKey
     int count;
 
 };
-typedef std::vector<UserCaseKey> TUserCaseKeyList;
+typedef std::vector<UserCaseKey*> TUserCaseKeyList;
 
 //---------------------------------------------------------------------------
 class UserCase
 {
 public:
-    UserCase(AnsiString name,AnsiString context="",int intervalMS=1000);
+    UserCase(AnsiString name);
     ~UserCase();
 
 
     bool loadKey(void);
+    bool saveKeys(void);
     bool getKeyList(TUserCaseKeyList& keyList);
  /////////////////////////discard interface/////////////////////
     TStringList* getKeyList();
@@ -49,6 +50,14 @@ public:
     //将指定序号按键往下移动一个.
     int moveDown(int index);
     size_t getNextKey(AnsiString& key);
+    
+    int  getKeyTime(int index);
+    UserCaseKey* getKey(int index);
+    bool insertKeyToDB(AnsiString keyname, int keytime);
+    bool deleteKey(int index);
+    bool modifyKey(int index, int keytime, AnsiString keyname);
+    bool insertKey(int index, int keytime, AnsiString keyname);
+    bool addKey(int keytime, AnsiString keyname);
     /*
        function:在定时器中运行用例。
        index:返回当前运行的是第几个按键
@@ -56,15 +65,15 @@ public:
     */
 
     bool run(int &index);
-    
+
     AnsiString getName();
 private:
+    bool clearKeyList();     
     AnsiString   m_name;
-    AnsiString tableName;
-    TStringList* m_context;
-    int m_interval_ms;
-    int m_index;
-    //TUserCaseKeyList m_keyList;
+    AnsiString   tableName;
+
+    int          m_index;
+
     TList  *m_keyList;
     
     CppSQLite3DB       m_db;

@@ -69,6 +69,10 @@ __published:	// IDE-managed Components
     TBitBtn *btnDelKey;
     TBitBtn *btnModifyKey;
     TLabeledEdit *edtKeyTime;
+        TMenuItem *N2;
+        TMenuItem *mmRecUc;
+        TMenuItem *mmAddUc;
+        TButton *btnSave;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall onKeyClick(TObject *Sender);
         void __fastcall onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
@@ -98,6 +102,14 @@ __published:	// IDE-managed Components
     void __fastcall mmLearnKeyClick(TObject *Sender);
     void __fastcall N1Click(TObject *Sender);
     void __fastcall mmIdraClick(TObject *Sender);
+        void __fastcall mmRecUcClick(TObject *Sender);
+        void __fastcall lstStatusClick(TObject *Sender);
+        void __fastcall mmAddUcClick(TObject *Sender);
+        void __fastcall btnDownClick(TObject *Sender);
+        void __fastcall btnUpClick(TObject *Sender);
+        void __fastcall btnSaveClick(TObject *Sender);
+        void __fastcall btnDelKeyClick(TObject *Sender);
+        void __fastcall btnModifyKeyClick(TObject *Sender);
         //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations
@@ -118,6 +130,7 @@ private:	// User declarations
     int  __fastcall findItem(AnsiString item);
     void __fastcall updateUserCaseList();
     void __fastcall updateUcKeyList(AnsiString &ucName);
+    void __fastcall createUserCase();
 
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

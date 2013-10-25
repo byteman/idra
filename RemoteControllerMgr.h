@@ -49,21 +49,35 @@ public:
       void recordKey(AnsiString keyName);
       void StartRecord();
       void StopRecord();
-      bool SaveRecordToUserCase(AnsiString ucName);
-      bool InsertUserCaseToMap(AnsiString ucName,AnsiString ucKeyList,int keyMs);
+      bool SaveRecordToUserCase(AnsiString ucName="");
+      bool InsertUserCaseToMap(AnsiString ucName);
+      bool checkExistUcTable(AnsiString ucName);
+      bool deleteInvalidUcItem(AnsiString ucName);
       //usercase play
+      
+      bool SetCurrUserCase(AnsiString ucName);
       bool StartPlayUserCase(AnsiString ucName);
       bool StopUserCase(AnsiString ucName);
       bool deleteUserCase(AnsiString ucName);
       bool deleteUserCaseFromMap(AnsiString ucName);
       bool deleteUserCaseFromDB(AnsiString ucName);
+      bool deleteUcKey(int key);
       //usercase load&create
       bool loadUserCase();
+      bool AddUserCase(AnsiString ucName,AnsiString deviceName);
+      bool DBExistUserCase(AnsiString ucName);
+      bool createNewUserCase(AnsiString ucName,AnsiString device);
+      bool addNewUserCaseToDB(AnsiString ucName);               
+      bool existUserCase(AnsiString ucName);
       //获取用例列表
       size_t getUCList(TKeyNameList& list);
       UserCase* getUserCase(AnsiString ucName);
+      UserCase* getCurrUserCase();
       //获取某个用例的按键列表
       TStringList* getUCKeyList(AnsiString ucName);
+      bool getUcKeyList(AnsiString ucName,TUserCaseKeyList& keyList);
+      int  getUcKeyTime(AnsiString ucName,int indexKey);
+
 private:
       void deleteFromDeviceList(AnsiString &name);
       void handleIdraError(IDRA_ERR err);
@@ -80,7 +94,9 @@ private:
       bool m_record;
       TDeviceNameList m_standKey_list;
       TUserCaseMap    m_userCaseMap;
-      TStringList *m_keyList;
+      TStringList     *m_keyList;
+      UserCase*       m_curUserCase; //当前的选中的用例，或者新建的用例。
+      DWORD           m_record_time;  //记录的按键时间。
 
 };
 #endif
