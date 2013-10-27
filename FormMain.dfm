@@ -58,14 +58,6 @@ object Form1: TForm1
         TabOrder = 2
         OnClick = btnRecordClick
       end
-      object chkDevice: TCheckBox
-        Left = 280
-        Top = 37
-        Width = 97
-        Height = 17
-        Caption = #36965#25511#22120#24405#21046
-        TabOrder = 3
-      end
     end
     object grp4: TGroupBox
       Left = 2

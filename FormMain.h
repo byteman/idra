@@ -76,7 +76,6 @@ __published:	// IDE-managed Components
         TPopupMenu *pm4;
         TMenuItem *N3;
         TMenuItem *N4;
-        TCheckBox *chkDevice;
         TMenuItem *N5;
         TMenuItem *N6;
         TMenuItem *N7;

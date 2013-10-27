@@ -118,6 +118,7 @@ void __fastcall TForm1::disableWork(bool yes)
      btnModify->Enabled = !yes;
      btnLearn->Enabled = !yes;
      btnPlay->Enabled = !yes;
+     btnRecord->Enabled = !yes;
 }
 void __fastcall TForm1::FormCreate(TObject *Sender)
 {
@@ -686,7 +687,13 @@ void __fastcall TForm1::mmUCDelClick(TObject *Sender)
 
 void __fastcall TForm1::btnPlayClick(TObject *Sender)
 {
-
+         AnsiString device ;
+         if(!RemoteControllerMgr::get()->getCurrentCtrlDeviceName(device))
+         {
+               ShowMessage("ÇëÏÈÑ¡ÔñÒ£¿ØÆ÷");
+               bylog("ÇëÏÈÑ¡ÔñÒ£¿ØÆ÷");
+               return;
+         }
          if(pUserCase)
          {
               if(pUserCase->getKeyCount() > 0)
