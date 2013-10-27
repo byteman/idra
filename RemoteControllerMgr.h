@@ -8,12 +8,23 @@
 #include "UserCase.h"
 #include  <vector>
 #include  <map>
+#include <Classes.hpp>
+#include <ExtCtrls.hpp>
+//#include <QExtCtrls.hpp>
 //---------------------------------------------------------------------------
 
 class  UserCase;
 typedef std::vector<AnsiString> TDeviceNameList;
 typedef std::vector<RemoteController*> TDeviceMap;
 typedef std::map<AnsiString, UserCase*> TUserCaseMap;
+
+
+enum  KEY_STATE
+{
+     KEY_ADD,
+     KEY_MODIFY,
+     KEY_INSERT
+};
 class RemoteControllerMgr
 {
 public:
@@ -36,6 +47,11 @@ public:
       TDeviceNameList  m_device_list;
       
       bool learnKey(AnsiString keyName, int timeS);
+      bool learnKeyValue(AnsiString &keyValue, int timeS);
+      /*
+      用当前的遥控器检测是否收到外部遥控器的数据。
+      */
+      bool getKey(AnsiString &keyName, int timeS);
       bool deleteKey(AnsiString keyName);
       bool modifyKey(AnsiString keyName,AnsiString newKeyName);
       bool sendKey(AnsiString keyName);
@@ -47,7 +63,7 @@ public:
 
       //usercase  record&save
       void recordKey(AnsiString keyName);
-      void StartRecord();
+      void StartRecord(bool byDevice=false,TNotifyEvent  event=NULL);
       void StopRecord();
       bool SaveRecordToUserCase(AnsiString ucName="");
       bool InsertUserCaseToMap(AnsiString ucName);
@@ -69,6 +85,10 @@ public:
       bool createNewUserCase(AnsiString ucName,AnsiString device);
       bool addNewUserCaseToDB(AnsiString ucName);               
       bool existUserCase(AnsiString ucName);
+      void setKeyState(KEY_STATE state,int keyIdx);
+      bool modifyUcName(AnsiString ucName, AnsiString ucNewName);
+      bool updateUcName(AnsiString& curName, AnsiString &newName);
+
       //获取用例列表
       size_t getUCList(TKeyNameList& list);
       UserCase* getUserCase(AnsiString ucName);
@@ -79,6 +99,7 @@ public:
       int  getUcKeyTime(AnsiString ucName,int indexKey);
 
 private:
+      void __fastcall tmr1Timer(TObject *Sender);
       void deleteFromDeviceList(AnsiString &name);
       void handleIdraError(IDRA_ERR err);
       bool createDeviceTable();
@@ -91,12 +112,17 @@ private:
       TDeviceMap   m_devices;
       int          m_port;
       bool m_idra_ok;
-      bool m_record;
+      bool m_record;     //是否在录制状态。
+      bool m_by_device; //通过遥控器来录制。
       TDeviceNameList m_standKey_list;
       TUserCaseMap    m_userCaseMap;
       TStringList     *m_keyList;
       UserCase*       m_curUserCase; //当前的选中的用例，或者新建的用例。
       DWORD           m_record_time;  //记录的按键时间。
+      TTimer*         m_timer;
+      TNotifyEvent    m_timer_notify;
+      KEY_STATE       m_state;
+      int             m_last_key;
 
 };
 #endif

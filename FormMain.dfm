@@ -40,7 +40,7 @@ object Form1: TForm1
         OnClick = btnPlayClick
       end
       object btnPause: TBitBtn
-        Left = 142
+        Left = 110
         Top = 32
         Width = 75
         Height = 25
@@ -50,13 +50,21 @@ object Form1: TForm1
         OnClick = btnPauseClick
       end
       object btnRecord: TBitBtn
-        Left = 256
+        Left = 200
         Top = 32
         Width = 75
         Height = 25
         Caption = #24320#22987#24405#21046
         TabOrder = 2
         OnClick = btnRecordClick
+      end
+      object chkDevice: TCheckBox
+        Left = 280
+        Top = 37
+        Width = 97
+        Height = 17
+        Caption = #36965#25511#22120#24405#21046
+        TabOrder = 3
       end
     end
     object grp4: TGroupBox
@@ -76,6 +84,7 @@ object Form1: TForm1
         ItemHeight = 13
         TabOrder = 0
         OnClick = lstStatusClick
+        OnMouseUp = lstStatusMouseUp
       end
       object pnl1: TPanel
         Left = 304
@@ -85,57 +94,57 @@ object Form1: TForm1
         Align = alRight
         TabOrder = 1
         object btnUp: TBitBtn
-          Left = 16
-          Top = 64
-          Width = 65
+          Left = 8
+          Top = 80
+          Width = 81
           Height = 33
           Caption = #19978#31227
           TabOrder = 0
           OnClick = btnUpClick
         end
         object btnDown: TBitBtn
-          Left = 16
-          Top = 101
-          Width = 65
+          Left = 8
+          Top = 117
+          Width = 81
           Height = 33
           Caption = #19979#31227
           TabOrder = 1
           OnClick = btnDownClick
         end
         object btnDelKey: TBitBtn
-          Left = 16
-          Top = 138
-          Width = 65
+          Left = 8
+          Top = 154
+          Width = 81
           Height = 33
           Caption = #21024#38500
           TabOrder = 2
           OnClick = btnDelKeyClick
         end
         object btnModifyKey: TBitBtn
-          Left = 16
-          Top = 181
-          Width = 65
-          Height = 33
+          Left = 48
+          Top = 21
+          Width = 40
+          Height = 25
           Caption = #20462#25913
           TabOrder = 3
           OnClick = btnModifyKeyClick
         end
         object edtKeyTime: TLabeledEdit
-          Left = 16
+          Left = 8
           Top = 24
-          Width = 65
+          Width = 33
           Height = 21
-          EditLabel.Width = 63
+          EditLabel.Width = 81
           EditLabel.Height = 13
-          EditLabel.Caption = #38388#38548#26102#38388#65306' '
+          EditLabel.Caption = #38388#38548#26102#38388'('#31186')'#65306' '
           LabelPosition = lpAbove
           LabelSpacing = 3
           TabOrder = 4
         end
         object btnSave: TButton
-          Left = 16
-          Top = 223
-          Width = 65
+          Left = 8
+          Top = 194
+          Width = 81
           Height = 33
           Caption = #20445#23384
           TabOrder = 5
@@ -398,6 +407,10 @@ object Form1: TForm1
   object pm3: TPopupMenu
     Left = 768
     Top = 80
+    object N7: TMenuItem
+      Caption = #20462#25913#29992#20363#21517
+      OnClick = N7Click
+    end
     object mmUCDel: TMenuItem
       Caption = #21024#38500#24403#21069#29992#20363
       OnClick = mmUCDelClick
@@ -411,5 +424,25 @@ object Form1: TForm1
     OnTimer = tmr1Timer
     Left = 520
     Top = 16
+  end
+  object pm4: TPopupMenu
+    Left = 680
+    Top = 80
+    object N3: TMenuItem
+      Caption = #21024#38500#25353#38190
+      OnClick = N3Click
+    end
+    object N4: TMenuItem
+      Caption = #20462#25913#25353#38190
+      OnClick = N4Click
+    end
+    object N6: TMenuItem
+      Caption = #25554#20837#25353#38190
+      OnClick = N6Click
+    end
+    object N5: TMenuItem
+      Caption = #28165#38500#20840#37096
+      OnClick = N5Click
+    end
   end
 end

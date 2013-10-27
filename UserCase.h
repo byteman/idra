@@ -13,16 +13,20 @@ struct UserCaseKey
         keyName = "";
         time = 1000;
         count = 0;
+        state = 0;
+
     }
     UserCaseKey(AnsiString name, int tm):
         keyName(name),
         time(tm)
     {
         count = 0;
+        state = 0;
     }
     AnsiString keyName;
     int time;
     int count;
+    int state;
 
 };
 typedef std::vector<UserCaseKey*> TUserCaseKeyList;
@@ -58,17 +62,20 @@ public:
     bool modifyKey(int index, int keytime, AnsiString keyname);
     bool insertKey(int index, int keytime, AnsiString keyname);
     bool addKey(int keytime, AnsiString keyname);
+    bool clearAllKey(void);
+    void setKeyState(int index, int state);
     /*
        function:在定时器中运行用例。
        index:返回当前运行的是第几个按键
        bool:true返回成功，false返回结束。
     */
 
-    bool run(int &index);
+    bool run(int &index,int &time);
 
     AnsiString getName();
+    bool clearKeyList(); 
 private:
-    bool clearKeyList();     
+
     AnsiString   m_name;
     AnsiString   tableName;
 

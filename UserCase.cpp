@@ -37,6 +37,10 @@ bool UserCase::getKeyList(TUserCaseKeyList& keyList)
      return true;
 
 }
+bool UserCase::clearAllKey(void)
+{
+
+}
 int  UserCase::getKeyTime(int index)
 {
     if( index >= m_keyList->Count) return -1;
@@ -55,6 +59,11 @@ UserCaseKey* UserCase::getKey(int index)
 }
 void UserCase::reset()
 {
+     for(size_t i = 0; i < m_keyList->Count; i++)
+     {
+          UserCaseKey* pKey = (UserCaseKey*)m_keyList->Items[i];
+          pKey->count = 0;
+     }
      m_index = 0;
 }
 //获取用例名字。
@@ -89,18 +98,23 @@ bool UserCase::saveKeys(void)
 
           sql.format("begin transaction");
           m_db.execDML(sql);
+          #if 1
           for(size_t i = 0; i < m_keyList->Count; i++)
           {
                 UserCaseKey *pKey =  (UserCaseKey *)m_keyList->Items[i];
                 insertKeyToDB(pKey->keyName, pKey->time );
           }
+          #endif
           sql.format("commit transaction");
           m_db.execDML(sql);
+          return true;
      }
      catch(CppSQLite3Exception& e)
      {
 
      }
+
+     return false;
 }
 /*
 从数据库中加载用例的按键信息
@@ -140,20 +154,27 @@ bool UserCase::loadKey(void)
       return false;
 }
 //run
-bool UserCase::run(int &index)
+bool UserCase::run(int &index,int &time)
 {
-     if( (m_index+1) >= m_keyList->Count)
+     if( m_index >= m_keyList->Count)
      {
-         index = m_index;
+         index = m_index-1;
          return false;
      }
      UserCaseKey* pKey = (UserCaseKey*)m_keyList->Items[m_index];
-
-     pKey->count+=1000;
-     if(pKey->count >= pKey->time)
+     index = m_index;
+     time  = pKey->time;
+     pKey->count++;
+     if(pKey->count < pKey->time)
      {
-         RemoteControllerMgr::get()->sendKey(pKey->keyName);
+
+         return true;
      }
+     pKey->count = 0;
+     RemoteControllerMgr::get()->sendKey(pKey->keyName);
+
+     m_index++;
+     return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -184,6 +205,18 @@ bool UserCase::modifyKey(int index, int keytime, AnsiString keyname)
      pKey->keyName = keyname;
 
      return true;
+}
+void UserCase::setKeyState(int index, int state)
+{
+    if( m_keyList == NULL) return ;
+
+    if(m_keyList->Count < (index+1)) return ;
+
+    UserCaseKey* pKey = (UserCaseKey*) m_keyList->Items[index];
+
+    pKey->state    = state;
+
+
 }
 //在某个位置插入按键
 bool UserCase::insertKey(int index, int keytime, AnsiString keyname)

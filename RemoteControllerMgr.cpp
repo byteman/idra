@@ -33,6 +33,19 @@ RemoteControllerMgr::RemoteControllerMgr():
         for(int i = 0; i < STAND_KEY_NUM; i++)
         m_standKey_list.push_back(gStandKeyList[i]);
         m_keyList = new TStringList();
+        m_timer = new TTimer(NULL);
+        m_state = KEY_ADD;
+        
+}
+
+void RemoteControllerMgr::setKeyState(KEY_STATE state,int keyIdx)
+{
+      m_state = state;
+      m_last_key = keyIdx;
+      if(m_curUserCase)
+      {
+          //m_curUserCase->setKeyState(m_last_key, state);
+      }
 }
 int RemoteControllerMgr::openDevice(int port)
 {
@@ -403,6 +416,23 @@ void RemoteControllerMgr::handleIdraError(IDRA_ERR err)
          bylog("未知命令");
      }
 }
+
+bool RemoteControllerMgr::getKey(AnsiString &keyName, int timeS)
+{
+    if(!m_curDev)
+    {
+        bylog("没有选中遥控器");
+        return false;
+    }
+    AnsiString keyCodec="";
+    if(!learnKey(keyCodec,timeS))
+    {
+        return false;
+    }
+    
+
+
+}
 //为当前遥控器学习按键编码
 bool RemoteControllerMgr::learnKey(AnsiString keyName,int timeS)
 {
@@ -522,7 +552,6 @@ bool RemoteControllerMgr::createUserCaseTable()
 }
 
 
-
 void RemoteControllerMgr::recordKey(AnsiString keyName)
 {
       DWORD tick = GetTickCount();
@@ -532,19 +561,72 @@ void RemoteControllerMgr::recordKey(AnsiString keyName)
       
       if(m_curUserCase)
       {
-          m_curUserCase->addKey(keyS, keyName);
+          if(m_state == KEY_ADD)
+          {
+               m_curUserCase->addKey(keyS, keyName);
+          }
+          else if( m_state == KEY_INSERT)
+          {
+               m_curUserCase->insertKey(m_last_key, keyS, keyName);
+
+          }
+          else if( m_state == KEY_MODIFY)
+          {
+               m_curUserCase->modifyKey(m_last_key, keyS, keyName);
+          }
+          m_state = KEY_ADD;
+          m_last_key = -1;
       }
      
 }
-void RemoteControllerMgr::StartRecord()
+bool RemoteControllerMgr::learnKeyValue(AnsiString &keyValue, int timeS)
+{
+    if(!m_idra_ok)
+    {
+       bylog("红外设备没有打开");
+       return false;
+    }
+
+    if(!m_curDev)
+    {
+        bylog("没有选中遥控器");
+        return false;
+    }
+    char codec[128] = {0,};
+    IDRA_ERR err = m_idra.learnKey((unsigned char*)codec, timeS) ;
+    if( err != IDRA_ERR_OK)
+    {
+         handleIdraError(err);
+         return false;
+    }
+    keyValue = codec;
+
+    return true;
+
+}
+void __fastcall RemoteControllerMgr::tmr1Timer(TObject *Sender)
+{
+      
+}
+void RemoteControllerMgr::StartRecord(bool byDevice,TNotifyEvent  event)
 {
      m_record = true;
      m_record_time = GetTickCount();
      m_keyList->Clear();
+     m_by_device = byDevice;
+     if( m_by_device )
+     {
+         m_timer->OnTimer  = tmr1Timer;
+         m_timer->Interval = 1000;
+         m_timer->Enabled  = true;
+        //如果是采用遥控器录制方式。则将红外模块切换到学习模式。并且开启一个反复学习定时器中来学习按键。
+     }
 }
 void RemoteControllerMgr::StopRecord()
 {
-     m_record = false;
+     m_record           = false;
+     m_by_device        = false;
+     m_timer->Enabled   = false;
 }
 
 bool RemoteControllerMgr::checkExistUcTable(AnsiString ucName)
@@ -582,8 +664,8 @@ bool RemoteControllerMgr::SaveRecordToUserCase(AnsiString ucName)
 
     if(pUC == NULL) return false;
 
-    pUC->saveKeys();
-    return false;
+    return pUC->saveKeys();
+ 
 }
 bool RemoteControllerMgr::loadUserCase()
 {
@@ -690,6 +772,57 @@ bool RemoteControllerMgr::deleteUserCase(AnsiString ucName)
            return false;
       }
       return  deleteUserCaseFromMap(ucName);
+}
+
+bool RemoteControllerMgr::updateUcName(AnsiString& curName, AnsiString &newName)
+{
+     bool ok = false;
+     CppSQLite3Buffer sql;
+
+     
+     sql.format("update or rollback tbl_usercase set uc_name=%Q where uc_name=%Q",newName,curName);
+
+     try{
+
+        if( m_db.execDML(sql) > 0)
+        {
+            ok = true;
+        }
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+
+     if(!ok) return false;
+     ok = false;
+     sql.format("alter table tbl_uc_%s rename to tbl_uc_%s",curName,newName);
+     try
+     {
+
+        m_db.execDML(sql);
+
+        ok = true;
+
+     }
+     catch(CppSQLite3Exception& e)
+     {
+
+     }
+
+     deleteUserCaseFromMap(curName);
+     InsertUserCaseToMap(newName);
+     
+     return ok;
+}
+
+bool RemoteControllerMgr::modifyUcName(AnsiString ucName, AnsiString ucNewName)
+{
+    if(!existUserCase(ucName))
+    {
+         return false;
+    }
+    
 }
 //设置当前的用例名称。
 bool RemoteControllerMgr::SetCurrUserCase(AnsiString ucName)

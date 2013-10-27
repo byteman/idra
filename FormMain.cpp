@@ -235,7 +235,10 @@ void __fastcall TForm1::onKeyClick(TObject *Sender)
               bylog("【%s】键:发送成功",btn->Caption);
           }
           if(bRecord)
-                lstStatus->AddItem(btn->Caption,Sender);
+          {
+              updateUcKeyList("");
+          }
+
       }
 }
 
@@ -564,6 +567,7 @@ void __fastcall TForm1::btnRecordClick(TObject *Sender)
     if(bRecord)
     {
         btnRecord->Caption = "开始录制";
+        btnPlay->Enabled = true;
         RemoteControllerMgr::get()->StopRecord();
         bool save = false;
         switch (Application->MessageBox("是否保存测试用例", "提示", 
@@ -587,6 +591,7 @@ void __fastcall TForm1::btnRecordClick(TObject *Sender)
     else
     {
         btnRecord->Caption = "停止录制";
+        btnPlay->Enabled = false;
         RemoteControllerMgr::get()->StartRecord();
 
 
@@ -615,8 +620,9 @@ void __fastcall TForm1::updateUcKeyList(AnsiString &ucName)
          AnsiString item;
 
          //item = IntToStr(i) + " " + keyList.at(i)->keyName + " " + IntToStr(keyList.at(i)->time);
-
-         list->Add(keyList.at(i)->keyName);
+         //item = keyList.at(i)->keyName;
+         item.printf("[%02d]    按键:%s   ",i+1, keyList.at(i)->keyName);
+         list->Add(item);
      }
      lstStatus->Items = list;
 }
@@ -690,7 +696,8 @@ void __fastcall TForm1::btnPlayClick(TObject *Sender)
                    
                    pUserCase->reset();
                    btnPause->Caption = "暂停";
-                    btnPause->Enabled = true;
+                   btnRecord->Enabled = false;
+                   btnPause->Enabled = true;
               }
          }
      
@@ -702,35 +709,25 @@ void __fastcall TForm1::tmr1Timer(TObject *Sender)
     //
     if(pUserCase)
     {
-      #if 0
-        AnsiString key;
-        int index =  pUserCase->getNextKey(key);
-
-        lstStatus->ItemIndex = index;
-        RemoteControllerMgr::get()->sendKey(key);
-
-        if(index >= pUserCase->getKeyCount()-1)
+     
+        int index;
+        int time;
+        bool ret = pUserCase->run(index,time);
+        if(!ret)
         {
              tmr1->Enabled = false;
              bylog("用例运行完毕");
              pUserCase->reset();
-             btnPause->Enabled = false;
+             btnPause->Enabled  = false;
+             btnRecord->Enabled = true;
+             return;
         }
-      #endif
-      int index;
-      bool ret = pUserCase->run(index);
-      if(!ret)
-      {
-           tmr1->Enabled = false;
-           bylog("用例运行完毕");
-           pUserCase->reset();
-           btnPause->Enabled = false;
-      }
-      else
-      {
-           
-      }
-      lstStatus->ItemIndex = index;
+        else
+        {
+            //bylog();
+        }
+        lstStatus->ItemIndex = index;
+        edtKeyTime->Text =   time;
 
 
     }
@@ -786,6 +783,7 @@ void __fastcall TForm1::mmRecUcClick(TObject *Sender)
 void __fastcall TForm1::lstStatusClick(TObject *Sender)
 {
      int index = lstUserCase->ItemIndex;
+
      if(index != -1) //选中了才弹出菜单
      {
           AnsiString ucName =  lstUserCase->Items->Strings[index];
@@ -849,7 +847,14 @@ void __fastcall TForm1::btnUpClick(TObject *Sender)
 
 void __fastcall TForm1::btnSaveClick(TObject *Sender)
 {
-     RemoteControllerMgr::get()->SaveRecordToUserCase("");
+     if(RemoteControllerMgr::get()->SaveRecordToUserCase(""))
+     {
+         ShowMessage("保存成功");
+     }
+     else
+     {
+         ShowMessage("保存失败");
+     }
 }
 //---------------------------------------------------------------------------
 
@@ -880,6 +885,98 @@ void __fastcall TForm1::btnModifyKeyClick(TObject *Sender)
          }
 
     }
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::lstStatusMouseUp(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+     if(Button == mbRight && bRecord)
+     {
+           if(lstStatus->ItemIndex != -1) //选中了才弹出菜单
+           {
+              TPoint pt(X,Y);
+              TPoint pt2 = lstStatus->ClientToScreen(pt);
+              pm4->Popup(pt2.x,pt2.y);
+           }
+
+     }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::N3Click(TObject *Sender)
+{
+    UserCase* pUc = RemoteControllerMgr::get()->getCurrUserCase();
+    if(pUc)
+    {
+         int idx =lstStatus->ItemIndex ;
+         if(idx != -1)
+         {
+             pUc->deleteKey(idx);
+             updateUcKeyList(pUc->getName());
+             lstStatus->ItemIndex = idx;
+         }
+
+    }
+        
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::N5Click(TObject *Sender)
+{
+
+    UserCase* pUc = RemoteControllerMgr::get()->getCurrUserCase();
+    if(pUc)
+    {
+         int idx =lstStatus->ItemIndex ;
+         if(idx != -1)
+         {
+             pUc->clearKeyList();
+             updateUcKeyList(pUc->getName());
+         }
+
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::N4Click(TObject *Sender)
+{
+     RemoteControllerMgr::get()->setKeyState(KEY_MODIFY,lstStatus->ItemIndex );
+
+     lstStatus->Items->Strings[lstStatus->ItemIndex] = lstStatus->Items->Strings[lstStatus->ItemIndex] + "     **待修改";
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::N6Click(TObject *Sender)
+{
+     RemoteControllerMgr::get()->setKeyState(KEY_INSERT,lstStatus->ItemIndex );
+     lstStatus->Items->Strings[lstStatus->ItemIndex] = lstStatus->Items->Strings[lstStatus->ItemIndex] + "     **待插入"; 
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::N7Click(TObject *Sender)
+{
+     int idx =lstUserCase->ItemIndex ;
+     if(idx != -1)
+     {
+         frmRemoteDev->Caption = "修改用例名称";
+         frmRemoteDev->ShowModal();
+         if(frmRemoteDev->isOk)
+         {
+             AnsiString ucName = lstUserCase->Items->Strings[idx];
+             if(RemoteControllerMgr::get()->existUserCase(ucName))
+             {
+                 if(RemoteControllerMgr::get()->updateUcName(ucName,frmRemoteDev->devName))
+                 {
+                     updateUserCaseList();
+                 }
+             }
+
+
+         }
+           //RemoteControllerMgr::get()->updateUcName()
+     }
 
 }
 //---------------------------------------------------------------------------

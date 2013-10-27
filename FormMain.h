@@ -73,6 +73,13 @@ __published:	// IDE-managed Components
         TMenuItem *mmRecUc;
         TMenuItem *mmAddUc;
         TButton *btnSave;
+        TPopupMenu *pm4;
+        TMenuItem *N3;
+        TMenuItem *N4;
+        TCheckBox *chkDevice;
+        TMenuItem *N5;
+        TMenuItem *N6;
+        TMenuItem *N7;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall onKeyClick(TObject *Sender);
         void __fastcall onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
@@ -110,6 +117,13 @@ __published:	// IDE-managed Components
         void __fastcall btnSaveClick(TObject *Sender);
         void __fastcall btnDelKeyClick(TObject *Sender);
         void __fastcall btnModifyKeyClick(TObject *Sender);
+        void __fastcall lstStatusMouseUp(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall N3Click(TObject *Sender);
+        void __fastcall N5Click(TObject *Sender);
+        void __fastcall N4Click(TObject *Sender);
+        void __fastcall N6Click(TObject *Sender);
+        void __fastcall N7Click(TObject *Sender);
         //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations

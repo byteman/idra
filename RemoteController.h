@@ -69,6 +69,11 @@ public:
      bool  setDeviceName(AnsiString name);
      /*获取按键所对应的编码*/
      bool getKeyCodec(AnsiString keyName,AnsiString &codec);
+     /*
+        根据按键码获取按键名。
+     */
+     bool getKeyName(AnsiString &codec);
+
      /*列出该遥控器所有的按键名称*/
      bool listKey(TKeyNameList& keylist,TKeyType type=TYPE_STAND);
 
