@@ -33,7 +33,9 @@ public:
       bool load();
       bool unLoad();
       int openDevice(int port = 1);
-
+      bool checkPortStatus();
+      void startPortCheck();
+      bool portStatus(void){return m_idra_ok;}
       RemoteController* existDevice( AnsiString& name);
       bool setCurrentCtrlDevice(AnsiString deviceName);
       bool setCurrentCtrlDevice(int index,AnsiString &deviceName);

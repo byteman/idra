@@ -163,3 +163,9 @@ IDRA_ERR IDraDevice::readKey(int addr,unsigned char codec[128])
       return IDRA_OPENFAIL;
 
 }
+
+bool IDraDevice::checkDevice(int port)
+{
+     return ( sio_lstatus(port) >= 0);
+}
+

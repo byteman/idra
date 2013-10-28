@@ -79,6 +79,7 @@ __published:	// IDE-managed Components
         TMenuItem *N5;
         TMenuItem *N6;
         TMenuItem *N7;
+    TTimer *tmr2;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall onKeyClick(TObject *Sender);
         void __fastcall onButtonSelect(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
@@ -123,6 +124,7 @@ __published:	// IDE-managed Components
         void __fastcall N4Click(TObject *Sender);
         void __fastcall N6Click(TObject *Sender);
         void __fastcall N7Click(TObject *Sender);
+    void __fastcall tmr2Timer(TObject *Sender);
         //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations

@@ -34,6 +34,12 @@ RemoteControllerMgr::RemoteControllerMgr():
         m_standKey_list.push_back(gStandKeyList[i]);
         m_keyList = new TStringList();
         m_timer = new TTimer(NULL);
+        m_timer->Interval = 10000;
+        m_timer->Enabled  = false;
+        m_timer->OnTimer  = tmr1Timer;
+        //如果是采用遥控器录制方式。则将红外模块切换到学习模式。并且开启一个反复学习定时器中来学习按键。
+
+
         m_state = KEY_ADD;
         
 }
@@ -604,9 +610,16 @@ bool RemoteControllerMgr::learnKeyValue(AnsiString &keyValue, int timeS)
     return true;
 
 }
+void RemoteControllerMgr::startPortCheck()
+{
+     m_timer->Enabled = true;
+}
 void __fastcall RemoteControllerMgr::tmr1Timer(TObject *Sender)
 {
-      
+     if(checkPortStatus())
+     {
+            
+     }
 }
 void RemoteControllerMgr::StartRecord(bool byDevice,TNotifyEvent  event)
 {
@@ -614,13 +627,7 @@ void RemoteControllerMgr::StartRecord(bool byDevice,TNotifyEvent  event)
      m_record_time = GetTickCount();
      m_keyList->Clear();
      m_by_device = byDevice;
-     if( m_by_device )
-     {
-         m_timer->OnTimer  = tmr1Timer;
-         m_timer->Interval = 1000;
-         m_timer->Enabled  = true;
-        //如果是采用遥控器录制方式。则将红外模块切换到学习模式。并且开启一个反复学习定时器中来学习按键。
-     }
+     
 }
 void RemoteControllerMgr::StopRecord()
 {
@@ -963,6 +970,25 @@ bool RemoteControllerMgr::deleteUcKey(int index)
      if(!m_curUserCase) return false;
 
      return m_curUserCase->deleteKey(index);
+}
+/*
+检查红外模块的状态
+*/
+bool RemoteControllerMgr::checkPortStatus()
+{
+     if(m_idra_ok)
+     {
+          //如果串口打开成功了的.检查串口是否打开失败
+          if( ! m_idra.checkDevice(m_port))
+          {
+              m_idra_ok = false;
+
+          }
+     }
+     else  //串口打开失败。检查串口打开是否能成功.
+     {
+         openDevice(1);
+     }
 }
 
 

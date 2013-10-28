@@ -30,6 +30,7 @@ static TButton*  pSelectButton = NULL;
 static TStringList* pUcKeyList = NULL;
 static UserCase* pUserCase = NULL;
 static bool bRecord = false;
+static bool bPortStatus = false;
 typedef std::map<AnsiString,TButton*> TButtonMap;
 static const char* gStandKeyList[] =
 {
@@ -139,12 +140,14 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
           bylog("红外发射模块通讯异常，请插入");
           updateIdraStatus(false);
           disableWork(true);
+          bPortStatus = false;
           //Application->Terminate();
       }
       else
       {
           bylog("红外发射模块通讯正常,串口[%d]",port);
           config.port = port;
+          bPortStatus = true;
           config.save();
           if(RemoteControllerMgr::get()->load())
           {
@@ -156,6 +159,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
           disableWork(false);
       }
       statusUC->Caption = "没有选中用例";
+      //RemoteControllerMgr::get()->startPortCheck();
       //cbbDevice->Handle
 
 
@@ -985,6 +989,28 @@ void __fastcall TForm1::N7Click(TObject *Sender)
            //RemoteControllerMgr::get()->updateUcName()
      }
 
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::tmr2Timer(TObject *Sender)
+{
+    bool nowSt = RemoteControllerMgr::get()->portStatus();
+
+    if(nowSt == bPortStatus)   return;
+    if(nowSt)
+    {
+          bylog("红外发射模块通讯正常");
+          updateIdraStatus(true);
+          disableWork(false);
+    }
+    else
+    {
+          bylog("红外发射模块通讯异常，请插入");
+          updateIdraStatus(false);
+          disableWork(true);
+    }
+    bPortStatus = nowSt;
 }
 //---------------------------------------------------------------------------
 
