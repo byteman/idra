@@ -20,7 +20,6 @@ class TForm1 : public TForm
 __published:	// IDE-managed Components
     TYbCommDevice *com1;
         TMainMenu *mm1;
-        TMenuItem *mmIdra;
         TMenuItem *mmCtrl;
         TGroupBox *grp2;
         TGroupBox *grp1;
@@ -58,7 +57,6 @@ __published:	// IDE-managed Components
         TMenuItem *mmLearnKey;
         TMenuItem *N1;
         TMenuItem *mmLog;
-        TMenuItem *mmLogClear;
         TPopupMenu *pm3;
         TMenuItem *mmUCDel;
         TMenuItem *mmUCDelAll;
@@ -70,7 +68,6 @@ __published:	// IDE-managed Components
     TBitBtn *btnModifyKey;
     TLabeledEdit *edtKeyTime;
         TMenuItem *N2;
-        TMenuItem *mmRecUc;
         TMenuItem *mmAddUc;
         TButton *btnSave;
         TPopupMenu *pm4;
@@ -125,6 +122,7 @@ __published:	// IDE-managed Components
         void __fastcall N6Click(TObject *Sender);
         void __fastcall N7Click(TObject *Sender);
     void __fastcall tmr2Timer(TObject *Sender);
+    void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         //void __fastcall onMouseUp(TObject *Sender,TMouseButton Button, TShiftState Shift, int X, int Y);
 
 private:	// User declarations

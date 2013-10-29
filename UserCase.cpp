@@ -16,6 +16,7 @@ UserCase::UserCase(AnsiString name)
     m_index = 0;
     m_keyList = new TList();
     loadKey();
+    m_save = true;
 }
 UserCase::~UserCase()
 {
@@ -107,6 +108,7 @@ bool UserCase::saveKeys(void)
           #endif
           sql.format("commit transaction");
           m_db.execDML(sql);
+          m_save = true;
           return true;
      }
      catch(CppSQLite3Exception& e)
@@ -138,7 +140,7 @@ bool UserCase::loadKey(void)
               AnsiString name = qry.fieldValue("name");
               int keyS = qry.getIntField("keytime",1000);
 
-              addKey(keyS,name);
+              addKey(keyS,name,true);
 
               qry.nextRow();
           }
@@ -189,7 +191,7 @@ bool UserCase::deleteKey(int index)
 
      delete pKey;
      m_keyList->Delete(index);
-
+     m_save = false;
      return true;
 }
 //修改指定按键的名称和按键间隔
@@ -203,7 +205,7 @@ bool UserCase::modifyKey(int index, int keytime, AnsiString keyname)
 
      pKey->time    = keytime;
      pKey->keyName = keyname;
-
+     m_save = false;
      return true;
 }
 void UserCase::setKeyState(int index, int state)
@@ -226,18 +228,18 @@ bool UserCase::insertKey(int index, int keytime, AnsiString keyname)
      UserCaseKey* pKey = new UserCaseKey(keyname,keytime);
 
      m_keyList->Insert(index, pKey);
-
+     m_save = false;
      return true;
 
 }
 //在用例表的最后面添加一个按键
-bool UserCase::addKey(int keytime, AnsiString keyname)
+bool UserCase::addKey(int keytime, AnsiString keyname,bool save)
 {
      if( m_keyList == NULL) return false;
 
      UserCaseKey* pKey = new UserCaseKey(keyname,keytime);
      m_keyList->Add(pKey);
-
+     m_save = save;
      return true;
 }
 //插入一条数据到数据库表中。
@@ -264,7 +266,7 @@ int UserCase::moveUp(int index)
      int to = (index - 1);
      if(to <= -1) to = 0;
      m_keyList->Move(index, to);
-
+     m_save = false;
      return to;
 }
 //将指定序号按键往下移动一个.
@@ -273,5 +275,6 @@ int UserCase::moveDown(int index)
     int to = (index + 1);
      if(to >= m_keyList->Count) to = to -1;
      m_keyList->Move(index, to);
+     m_save = false;
      return to;
 }

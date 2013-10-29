@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 160
-  Top = 9
+  Left = 165
+  Top = 30
   Width = 1025
   Height = 728
   Caption = #36965#25511#22120#27169#25311#22120'V1.0'
@@ -12,6 +12,7 @@ object Form1: TForm1
   Font.Style = []
   Menu = mm1
   OldCreateOrder = False
+  OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -257,7 +258,7 @@ object Form1: TForm1
       Width = 361
       Height = 184
       Align = alBottom
-      Caption = #33258#23450#20041#25353#38190#65306
+      Caption = #33258#23450#20041#25353#38190#65288#40736#26631#21491#38190#21487#28155#21152#65289#65306
       TabOrder = 1
       OnMouseUp = grpUserKeyMouseUp
     end
@@ -324,56 +325,53 @@ object Form1: TForm1
   object mm1: TMainMenu
     Left = 968
     Top = 80
-    object mmIdra: TMenuItem
-      Caption = #32418#22806#35774#22791#35774#32622
-      OnClick = mmIdraClick
-    end
     object mmCtrl: TMenuItem
+      AutoHotkeys = maManual
       Caption = #36965#25511#22120#31649#29702
       object mmAddDev: TMenuItem
+        AutoHotkeys = maManual
         Caption = #28155#21152#36965#25511#22120
         ShortCut = 16462
         OnClick = mmAddDevClick
       end
       object mmDelDev: TMenuItem
+        AutoHotkeys = maManual
         Caption = #21024#38500#36965#25511#22120
         ShortCut = 16452
         OnClick = mmDelDevClick
       end
       object mmMDev: TMenuItem
+        AutoHotkeys = maManual
         Caption = #20462#25913#36965#25511#22120
         ShortCut = 16461
         OnClick = mmMDevClick
       end
       object mmLearnKey: TMenuItem
+        AutoHotkeys = maManual
         Caption = #23398#20064#25353#38190
         ShortCut = 16460
         OnClick = mmLearnKeyClick
       end
       object N1: TMenuItem
+        AutoHotkeys = maManual
         Caption = #28155#21152#33258#23450#20041#25353#38190
-        ShortCut = 16459
+        ShortCut = 16449
         OnClick = N1Click
       end
     end
     object N2: TMenuItem
+      AutoHotkeys = maManual
       Caption = #29992#20363#31649#29702
       object mmAddUc: TMenuItem
         Caption = #26032#24314#29992#20363
+        ShortCut = 49230
         OnClick = mmAddUcClick
-      end
-      object mmRecUc: TMenuItem
-        Caption = #24405#21046#29992#20363
-        OnClick = mmRecUcClick
       end
     end
     object mmLog: TMenuItem
-      Caption = #26085#24535#31649#29702
-      object mmLogClear: TMenuItem
-        Caption = #28165#31354#26085#24535
-        ShortCut = 16466
-        OnClick = mmLogClearClick
-      end
+      AutoHotkeys = maManual
+      Caption = #28165#31354#26085#24535
+      ShortCut = 16466
     end
   end
   object pm1: TPopupMenu

@@ -7,7 +7,7 @@
     <OBJFILES value="idra.obj FormMain.obj sqlite3.obj CppSQLite3.obj RemoteController.obj 
       IdraDevice.obj FormIdraSet.obj FormKey.obj RemoteControllerMgr.obj 
       FormRemoteController.obj SysConfig.obj KeyGroup.obj bylogger.obj 
-      UserCase.obj ByDBConfig.obj ByConfig.obj FormUcSave.obj"/>
+      UserCase.obj ByDBConfig.obj ByConfig.obj FormUcSave.obj PortChecker.obj"/>
     <RESFILES value="idra.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -78,6 +78,7 @@
       <FILE FILENAME="ByDBConfig.cpp" FORMNAME="" UNITNAME="ByDBConfig" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="ByConfig.cpp" FORMNAME="" UNITNAME="ByConfig" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="FormUcSave.cpp" FORMNAME="OKBottomDlg" UNITNAME="FormUcSave" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="PortChecker.cpp" FORMNAME="" UNITNAME="PortChecker" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

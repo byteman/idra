@@ -284,6 +284,11 @@ void __fastcall TForm1::addDevice(TObject *Sender)
 void __fastcall TForm1::delDevice(TObject *Sender)
 {
 
+    if(cbbDevice->ItemIndex == -1)
+    {
+       ShowMessage("请先选中需要删除的遥控器");
+       return;
+    }
     switch (Application->MessageBox("确认删除当前遥控器", "提示", MB_OKCANCEL 
         + MB_ICONQUESTION)) {
         case IDOK: {
@@ -550,25 +555,42 @@ void __fastcall TForm1::createUserCase()
               if(RemoteControllerMgr::get()->createNewUserCase(ucName,device))
               {
                   bylog("用例[%s]创建成功",ucName);
+
               }
               else
               {
-                  bylog("用例[%s]创建失败",ucName);
+                   AnsiString str;
+                   str.printf("用例 %s 已经存在了",ucName);
+                   ShowMessage(str);
+                   bylog("用例[%s]创建失败",ucName);
+                   return;
               }
               updateUserCaseList();
+              int index = lstUserCase->Items->IndexOf(ucName);
+              lstUserCase->ItemIndex = index;
 
           }
           else  bylog("用例名不能为空");
 
       }
+      else
+      {
+          return;
+      }
       RemoteControllerMgr::get()->StartRecord();
       btnRecord->Caption = "停止录制";
+      
       bRecord = true;
 }
 void __fastcall TForm1::btnRecordClick(TObject *Sender)
 {
     //
 
+    if(lstUserCase->ItemIndex == -1)
+    {
+        ShowMessage("请选中已有用例,或新建用例后，再点录制");
+        return;
+    }
     if(bRecord)
     {
         btnRecord->Caption = "开始录制";
@@ -590,13 +612,16 @@ void __fastcall TForm1::btnRecordClick(TObject *Sender)
         {
              RemoteControllerMgr::get()->SaveRecordToUserCase();
         }
-
+        lstUserCase->Enabled = true;
+        mmAddUc->Enabled = true;
 
     }
     else
     {
         btnRecord->Caption = "停止录制";
         btnPlay->Enabled = false;
+        lstUserCase->Enabled = false;
+        mmAddUc->Enabled = false;
         RemoteControllerMgr::get()->StartRecord();
 
 
@@ -634,10 +659,25 @@ void __fastcall TForm1::updateUcKeyList(AnsiString &ucName)
 void __fastcall TForm1::lstUserCaseClick(TObject *Sender)
 {
     //
+     static int old_index = -1;
      int index = lstUserCase->ItemIndex;
+
 
      if(index != -1)
      {
+          if(old_index != index)
+         {
+              if(RemoteControllerMgr::get()->SaveRecordToUserCase(""))
+              {
+                  // bylog("保存用例成功");
+              }
+              else
+              {
+                  // bylog("保存用例失败");
+              }
+              old_index = index;
+         }
+
           AnsiString ucName = lstUserCase->Items->Strings[index];
           updateUcKeyList(ucName);
 
@@ -1011,6 +1051,19 @@ void __fastcall TForm1::tmr2Timer(TObject *Sender)
           disableWork(true);
     }
     bPortStatus = nowSt;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
+{
+     if(RemoteControllerMgr::get()->SaveRecordToUserCase(""))
+     {
+         //ShowMessage("保存成功");
+     }
+     else
+     {
+         //ShowMessage("保存失败");
+     }
 }
 //---------------------------------------------------------------------------
 

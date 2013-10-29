@@ -37,6 +37,7 @@ RemoteControllerMgr::RemoteControllerMgr():
         m_timer->Interval = 10000;
         m_timer->Enabled  = false;
         m_timer->OnTimer  = tmr1Timer;
+        m_curUserCase = NULL;
         //如果是采用遥控器录制方式。则将红外模块切换到学习模式。并且开启一个反复学习定时器中来学习按键。
 
 
@@ -670,8 +671,12 @@ bool RemoteControllerMgr::SaveRecordToUserCase(AnsiString ucName)
          pUC = getUserCase(ucName);
 
     if(pUC == NULL) return false;
+    if(!pUC->needSave())
+    {
+       return pUC->saveKeys();
+    }
+    return true;
 
-    return pUC->saveKeys();
  
 }
 bool RemoteControllerMgr::loadUserCase()
@@ -942,7 +947,10 @@ bool RemoteControllerMgr::createNewUserCase(AnsiString ucName,AnsiString device)
 //判断内存中是否存在。
      if(existUserCase(ucName))
      {
-         bylog("用例 %s 已经存在了",ucName);
+         AnsiString str;
+         str.printf("用例 %s 已经存在了",ucName);
+         bylog(str.c_str());
+         
          return false;
      }
      if(!AddUserCase(ucName, device))
@@ -956,7 +964,7 @@ bool RemoteControllerMgr::createNewUserCase(AnsiString ucName,AnsiString device)
         return false;
      }
 
-     InsertUserCaseToMap(ucName);
+     return InsertUserCaseToMap(ucName);
      
 }
 //判断用例名是否已经存在了。

@@ -61,8 +61,9 @@ public:
     bool deleteKey(int index);
     bool modifyKey(int index, int keytime, AnsiString keyname);
     bool insertKey(int index, int keytime, AnsiString keyname);
-    bool addKey(int keytime, AnsiString keyname);
+    bool addKey(int keytime, AnsiString keyname,bool save =false);
     bool clearAllKey(void);
+    bool needSave(){return m_save;}
     void setKeyState(int index, int state);
     /*
        function:在定时器中运行用例。
@@ -82,7 +83,7 @@ private:
     int          m_index;
 
     TList  *m_keyList;
-    
+    bool m_save;
     CppSQLite3DB       m_db;
 };
 #endif
