@@ -186,7 +186,7 @@ void __fastcall TForm1::learnKey(TObject *Sender)
 
          btnLearn->Caption = "开始学习";
          mmLearnKey->Caption = "学习按键";
-         
+
          bylog("退出学习模式,进入工作模式");
          updateKeyStatus();
      }
@@ -204,6 +204,7 @@ void __fastcall TForm1::learnKey(TObject *Sender)
          enableAllKey(true);
 
      }
+     btnPlay->Enabled = bLearn;
      bLearn = !bLearn;
 
 }
@@ -555,7 +556,9 @@ void __fastcall TForm1::createUserCase()
               if(RemoteControllerMgr::get()->createNewUserCase(ucName,device))
               {
                   bylog("用例[%s]创建成功",ucName);
-
+                  statusUC->Caption = "当前用例:"+ ucName;
+                  RemoteControllerMgr::get()->SetCurrUserCase(ucName);
+                  lstStatus->Clear();
               }
               else
               {
@@ -721,6 +724,7 @@ void __fastcall TForm1::mmUCDelClick(TObject *Sender)
          if(RemoteControllerMgr::get()->deleteUserCase(ucName))
          {
               //lstUserCase->DeleteSelected();
+              lstStatus->Clear();
          }
          updateUserCaseList();
      }

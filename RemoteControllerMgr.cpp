@@ -768,6 +768,11 @@ bool RemoteControllerMgr::deleteUserCaseFromDB(AnsiString ucName)
           sql.format("delete from tbl_usercase where uc_name=%Q",ucName);
           m_db.execDML(sql);
 
+          sql.format("DROP TABLE IF EXISTS tbl_uc_%s;", ucName);
+
+
+          m_db.execDML(sql);
+
           return true;
     }
     catch(CppSQLite3Exception& e)

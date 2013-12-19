@@ -26,6 +26,11 @@ void __fastcall TfrmRemoteDev::btnOkClick(TObject *Sender)
 {
         isOk = true;
         devName = lblEdtName->Text;
+        if(devName.Length() == 0)
+        {
+              ShowMessage("ÇëÊäÈëÒ£¿ØÆ÷Ãû³Æ");
+              return;
+        }
         this->Close();
 }
 //---------------------------------------------------------------------------
