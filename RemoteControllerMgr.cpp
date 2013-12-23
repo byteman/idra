@@ -480,7 +480,11 @@ bool RemoteControllerMgr::sendKey(AnsiString keyName)
 
     unsigned char cmd[128];
     AnsiString codec;
-    if(!m_curDev->getKeyCodec(keyName, codec)) return false;
+    if(!m_curDev->getKeyCodec(keyName, codec))
+    {
+       bylog("遥控器没有改按键");
+       return false;
+    }
 
     memcpy(cmd, codec.data(),128);
 

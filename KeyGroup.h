@@ -15,9 +15,10 @@ public:
         KeyGroup(TGroupBox* container,  int rowNum, int colNum, int w=50, int h=40);
         void RegisterButtonClickEvent(TNotifyEvent _notify);
         void RegisterButtonMouseUpEvent(TMouseEvent _mouseNotify);
-        TButton*  addKeyButton(AnsiString btnName,int left, int top,int w, int h);
+        TButton*  addKeyButton(AnsiString btnName,int left, int top,int w, int h,bool enable=true);
+
         //按名字添加按键
-        TButton*  addKeyButton(AnsiString btnName);
+        TButton*  addKeyButton(AnsiString btnName,bool enable=true);
         int       addKeyButtonGroup(const char* keyNameList[], int size);
         int       addKeyButtonGroup(std::vector<AnsiString> &nameList);
         void      clearButtons();
@@ -31,7 +32,8 @@ public:
         int       leftKeyNum();
         int       getKeyNum();
 private:
-        TButton* addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h);
+       
+        TButton*  addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h, bool enable );
         TGroupBox* m_container;
         TNotifyEvent notify;
         TMouseEvent  mouseNofify;

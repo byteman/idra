@@ -434,7 +434,7 @@ void __fastcall TForm1::addUserKey(TObject *Sender)
                  bylog("改按键已经存在");
                  return;
              }
-             keyGroupUser->addKeyButton(name);
+             keyGroupUser->addKeyButton(name,false);
           }
      }
      else
@@ -1068,6 +1068,32 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
      {
          //ShowMessage("保存失败");
      }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::N8Click(TObject *Sender)
+{
+    //
+     int idx =lstUserCase->ItemIndex ;
+     if(idx != -1)
+     {
+         AnsiString ucName = lstUserCase->Items->Strings[idx];
+         AnsiString InputString = InputBox("修改用例" + ucName, "按键间隔时间(s):   ", "5");
+
+         int time;
+         if(!TryStrToInt(InputString, time))
+         {
+               ShowMessage("输入时间不正确");
+               return;
+
+         }
+         else
+         {
+
+         }
+     }
+
+
 }
 //---------------------------------------------------------------------------
 

@@ -30,7 +30,7 @@ void KeyGroup::RegisterButtonMouseUpEvent(TMouseEvent _mouseNotify)
 {
     mouseNofify = _mouseNotify;
 }
-TButton* KeyGroup::addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h)
+TButton* KeyGroup::addKeyButton(AnsiString name,TWinControl *parent,int left, int top,int w, int h, bool enable )
 {
       TButton* btn = new TButton(this);
 
@@ -46,11 +46,12 @@ TButton* KeyGroup::addKeyButton(AnsiString name,TWinControl *parent,int left, in
 
       btn->OnClick   =  notify;
       btn->OnMouseUp =  mouseNofify;
-      btn->Show();
 
+      btn->Show();
+      btn->Enabled = enable;
       return btn;
 }
-TButton*  KeyGroup::addKeyButton(AnsiString btnName)
+TButton*  KeyGroup::addKeyButton(AnsiString btnName,bool enable)
 {
        int left ,top;
        int w = m_w;
@@ -60,7 +61,7 @@ TButton*  KeyGroup::addKeyButton(AnsiString btnName)
        int left_align = (m_container->Width  - (r * w) )/2 ;
        int top_align  = (m_container->Height - (c * h) )/2 ;
        int i = m_container->ControlCount;
-       return addKeyButton(btnName, m_container, left_align +(i%r)*w, top_align +(i/r)*h,w,h);
+       return addKeyButton(btnName, m_container, left_align +(i%r)*w, top_align +(i/r)*h,w,h,enable);
 }
 int       KeyGroup::maxKeyNum()
 {
